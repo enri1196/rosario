@@ -275,8 +275,8 @@ button, select { font: inherit; }
   font-size: 13px;
 }
 
-.steps-legend li { display: flex; gap: 7px; }
-.step-num { flex: 0 0 18px; color: var(--color-accent); font: 700 11px "Cinzel", serif; }
+.steps-legend li { display: flex; align-items: baseline; gap: 7px; }
+.step-num { flex: 0 0 18px; color: var(--color-accent); font: 700 11px/1.55 "Cinzel", serif; }
 
 .mystery-recommendation {
   padding: 13px 18px;
