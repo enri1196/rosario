@@ -18,6 +18,7 @@
   --color-control-background: #10101c;
   --color-focus-outline: #ead184;
   --color-diagram-chain: #665024;
+  --color-diagram-accent: #c9a84c;
   --color-diagram-copy: #b8af91;
   --color-bead-highlight: #eadb92;
   --color-bead-shadow: #675022;
@@ -28,6 +29,37 @@
   --color-title-glow: rgba(201, 168, 76, .38);
   --color-card-divider: rgba(201, 168, 76, .14);
   color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --color-page-background: #f4ecd9;
+  --color-secondary-background: #e9dcc2;
+  --color-surface: #fbf5e8;
+  --color-text-primary: #2b241b;
+  --color-text-dim: #5f5545;
+  --color-accent: #765a13;
+  --color-accent-bright: #60470e;
+  --color-accent-dim: #80692f;
+  --color-on-bright-accent: #fffaf0;
+  --color-header-start: #f2e4c6;
+  --color-header-end: #e6d2aa;
+  --color-guide-glow: #ead9bb;
+  --color-surface-border: #92742f;
+  --color-surface-fill: rgba(118, 90, 19, .08);
+  --color-control-background: #fffaf0;
+  --color-focus-outline: #6d2b68;
+  --color-diagram-chain: #665024;
+  --color-diagram-accent: #c9a84c;
+  --color-diagram-copy: #554a3a;
+  --color-bead-highlight: #eadb92;
+  --color-bead-shadow: #675022;
+  --color-art-glow: rgba(118, 90, 19, .16);
+  --color-art-start: #f2e2c4;
+  --color-art-end: #ddc59b;
+  --color-footer-text: #655329;
+  --color-title-glow: rgba(118, 90, 19, .2);
+  --color-card-divider: rgba(101, 83, 41, .28);
+  color-scheme: light;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -100,22 +132,40 @@ button, select { font: inherit; }
 }
 
 .theme-toggle {
-  justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
+  display: grid;
+  place-items: center;
+  align-self: center;
+  flex: 0 0 var(--header-control-size);
+  inline-size: var(--header-control-size);
+  min-inline-size: var(--header-control-size);
+  max-inline-size: var(--header-control-size);
+  block-size: var(--header-control-size);
+  min-block-size: var(--header-control-size);
+  max-block-size: var(--header-control-size);
+  aspect-ratio: 1;
   border: 1px solid var(--color-surface-border);
   border-radius: 2px;
-  padding: 6px 9px;
+  padding: 0;
   background: var(--color-control-background);
   color: var(--color-accent-bright);
   cursor: pointer;
-  font: 600 11px "Cinzel", serif;
-  letter-spacing: .7px;
-  text-transform: uppercase;
+  font-size: 16px;
+  line-height: 1;
 }
 
-.theme-toggle-icon { font-size: 15px; line-height: 1; }
+.header-controls {
+  --header-control-size: 34px;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.theme-toggle:focus-visible,
+.language-picker select:focus-visible {
+  outline: 3px solid var(--color-focus-outline);
+  outline-offset: 3px;
+}
 
 .language-picker {
   justify-self: end;
@@ -129,6 +179,7 @@ button, select { font: inherit; }
 }
 
 .language-picker select {
+  height: var(--header-control-size);
   border: 1px solid var(--color-surface-border);
   border-radius: 2px;
   padding: 6px 28px 6px 8px;
@@ -210,7 +261,7 @@ button, select { font: inherit; }
 .chain { fill: none; stroke: var(--color-diagram-chain); stroke-width: 1.5; stroke-dasharray: 3 2; }
 .bead { fill: url(#bead); }
 .large-bead { fill: url(#bead); filter: url(#glow); }
-.cross { fill: var(--color-accent); }
+.cross { fill: var(--color-diagram-accent); }
 .diagram-title { fill: var(--color-accent-bright); font: 600 14px "Cinzel", serif; letter-spacing: 1px; text-transform: uppercase; }
 .diagram-copy { fill: var(--color-diagram-copy); font: italic 13px "EB Garamond", serif; }
 
@@ -361,7 +412,7 @@ button, select { font: inherit; }
 @media (max-width: 720px) {
   .header-row { grid-template-columns: 1fr; gap: 12px; }
   .header-spacer { display: none; }
-  .theme-toggle, .language-picker { justify-self: center; }
+  .header-controls { justify-self: center; }
   .main-grid { grid-template-columns: 1fr; }
   .guide { grid-row: 1; }
   .prayers-col { border: 0; border-top: 1px solid var(--color-surface-border); }

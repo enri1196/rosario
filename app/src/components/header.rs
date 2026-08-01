@@ -26,45 +26,41 @@ pub fn Header(
         <header class="site-header">
             <div class="ornament" aria-hidden="true">"✦ ✦ ✦ ❧ ✦ ✦ ✦"</div>
             <div class="header-row">
-                // This changes only effective state; `theme.rs` owns browser
-                // persistence and `App` owns document synchronization.
-                <button
-                    class="theme-toggle"
-                    type="button"
-                    aria-label=move || match theme.get() {
-                        Theme::Dark => copy.get().light_theme_label,
-                        Theme::Light => copy.get().dark_theme_label,
-                    }
-                    aria-pressed=move || (theme.get() == Theme::Light).to_string()
-                    title=move || match theme.get() {
-                        Theme::Dark => copy.get().light_theme_label,
-                        Theme::Light => copy.get().dark_theme_label,
-                    }
-                    on:click=move |_| theme.update(|current| *current = current.toggle())
-                >
-                    <span class="theme-toggle-icon" aria-hidden="true">
-                        {move || if theme.get() == Theme::Dark { "☀" } else { "☾" }}
-                    </span>
-                    <span class="theme-toggle-label">
-                        <span class="visually-hidden">{move || format!("{}: ", copy.get().theme_control_label)}</span>
-                        {move || match theme.get() {
+                <span class="header-spacer" aria-hidden="true"></span>
+                <h1>{move || copy.get().heading}</h1>
+                <div class="header-controls">
+                    <label class="language-picker">
+                        <span>{move || copy.get().language_label}</span>
+                        <select
+                            aria-label=move || copy.get().language_label
+                            on:change=move |event| language.set(Language::from_code(&event_target_value(&event)))
+                        >
+                            {Language::ALL.into_iter().map(|item| view! {
+                                <option value=item.code() selected=move || language.get() == item>{item.label()}</option>
+                            }).collect_view()}
+                        </select>
+                    </label>
+                    // This changes only effective state; `theme.rs` owns browser
+                    // persistence and `App` owns document synchronization.
+                    <button
+                        class="theme-toggle"
+                        type="button"
+                        aria-label=move || format!("{}: {}", copy.get().theme_control_label, match theme.get() {
                             Theme::Dark => copy.get().light_theme_label,
                             Theme::Light => copy.get().dark_theme_label,
-                        }}
-                    </span>
-                </button>
-                <h1>{move || copy.get().heading}</h1>
-                <label class="language-picker">
-                    <span>{move || copy.get().language_label}</span>
-                    <select
-                        aria-label=move || copy.get().language_label
-                        on:change=move |event| language.set(Language::from_code(&event_target_value(&event)))
+                        })
+                        aria-pressed=move || (theme.get() == Theme::Light).to_string()
+                        title=move || match theme.get() {
+                            Theme::Dark => copy.get().light_theme_label,
+                            Theme::Light => copy.get().dark_theme_label,
+                        }
+                        on:click=move |_| theme.update(|current| *current = current.toggle())
                     >
-                        {Language::ALL.into_iter().map(|item| view! {
-                            <option value=item.code() selected=move || language.get() == item>{item.label()}</option>
-                        }).collect_view()}
-                    </select>
-                </label>
+                        <span aria-hidden="true">
+                            {move || if theme.get() == Theme::Dark { "☀" } else { "☾" }}
+                        </span>
+                    </button>
+                </div>
             </div>
             <div class="ornament" aria-hidden="true">"✦ ✦ ✦ ❧ ✦ ✦ ✦"</div>
         </header>
