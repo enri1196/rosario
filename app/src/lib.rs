@@ -20,7 +20,7 @@ pub fn App() -> impl IntoView {
             <main id="main-content">
                 <div class="main-grid">
                     <PrayerSidebar copy />
-                    <RosaryGuide copy />
+                <RosaryGuide copy language />
                 </div>
                 <MysteriesSection copy />
             </main>

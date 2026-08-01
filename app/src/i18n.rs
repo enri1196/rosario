@@ -57,6 +57,8 @@ pub struct Translation {
     pub skip_link: &'static str,
     pub prayers_heading: &'static str,
     pub prayers: &'static [Prayer; 5],
+    pub mystery_recommendation_title: &'static str,
+    pub mystery_recommendation_pray_label: &'static str,
     pub creed_title: &'static str,
     pub creed: &'static str,
     pub guide_title: &'static str,
@@ -194,6 +196,7 @@ const EN_GROUPS: [MysteryGroup; 4] = [
 
 pub const IT: Translation = Translation {
     page_title: "Guida al Rosario", heading: "Guida al Rosario", language_label: "Lingua", skip_link: "Vai al contenuto", prayers_heading: "Preghiere del Rosario", prayers: &IT_PRAYERS,
+    mystery_recommendation_title: "Misteri da pregare oggi", mystery_recommendation_pray_label: "Misteri da pregare",
     creed_title: "Credo degli Apostoli", creed: "Credo in Dio, Padre onnipotente, Creatore del cielo e della terra; e in Gesù Cristo, suo unico Figlio, nostro Signore, il quale fu concepito di Spirito Santo, nacque da Maria Vergine, patì sotto Ponzio Pilato, fu crocifisso, morì e fu sepolto; discese agli inferi; il terzo giorno risuscitò da morte; salì al cielo, siede alla destra di Dio Padre onnipotente; di là verrà a giudicare i vivi e i morti. Credo nello Spirito Santo, la santa Chiesa cattolica, la comunione dei santi, la remissione dei peccati, la risurrezione della carne, la vita eterna. Amen.",
     guide_title: "Come recitare il Rosario", our_father: "Padre Nostro", hail_mary: "Ave Maria",
     steps: &["Segno della Croce", "Credo degli Apostoli", "Padre Nostro", "Tre Ave Maria", "Gloria al Padre", "O Mio Gesù", "Intenzione", "Annunciare e meditare il Mistero", "Ripetere per cinque decine"],
@@ -203,6 +206,7 @@ pub const IT: Translation = Translation {
 
 pub const EN: Translation = Translation {
     page_title: "Guide to the Rosary", heading: "Guide to the Rosary", language_label: "Language", skip_link: "Skip to content", prayers_heading: "Prayers of the Rosary", prayers: &EN_PRAYERS,
+    mystery_recommendation_title: "Mysteries for today", mystery_recommendation_pray_label: "Mysteries to pray",
     creed_title: "The Apostles' Creed", creed: "I believe in God, the Father almighty, Creator of heaven and earth, and in Jesus Christ, his only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried; he descended into hell; on the third day he rose again from the dead; he ascended into heaven, and is seated at the right hand of God the Father almighty; from there he will come to judge the living and the dead. I believe in the Holy Spirit, the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.",
     guide_title: "How to pray the Rosary", our_father: "Our Father", hail_mary: "Hail Mary",
     steps: &["Sign of the Cross", "Apostles' Creed", "Our Father", "Three Hail Marys", "Glory Be", "O My Jesus", "Prayer intention", "Announce and meditate on the Mystery", "Repeat for five decades"],

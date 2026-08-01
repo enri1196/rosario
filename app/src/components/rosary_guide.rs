@@ -1,9 +1,10 @@
 use super::rosary_diagram::RosaryDiagram;
-use crate::i18n::Translation;
+use super::MysteryRecommendation;
+use crate::i18n::{Language, Translation};
 use leptos::prelude::*;
 
 #[component]
-pub fn RosaryGuide(copy: Memo<Translation>) -> impl IntoView {
+pub fn RosaryGuide(copy: Memo<Translation>, language: RwSignal<Language>) -> impl IntoView {
     view! {
         <section class="guide" aria-labelledby="guide-heading">
             <h2 id="guide-heading" class="section-kicker">{move || copy.get().guide_title}</h2>
@@ -13,6 +14,8 @@ pub fn RosaryGuide(copy: Memo<Translation>) -> impl IntoView {
             </article>
 
             <RosaryDiagram copy />
+
+            <MysteryRecommendation copy language />
 
             <ol class="steps-legend">
                 <For

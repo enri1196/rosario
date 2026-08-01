@@ -98,6 +98,9 @@ the application composition and follow the data outward:
 - `app/src/components/rosary_guide.rs` renders the creed, rosary diagram,
   step legend, ending text, and decade note.
 - `app/src/components/rosary_diagram.rs` owns the diagram SVG and its labels.
+- `app/src/components/mystery_recommendation.rs` derives the current local
+  date, weekday, liturgical season, and major feast overrides, then suggests
+  the corresponding mystery set.
 - `app/src/components/mysteries_section.rs` and
   `app/src/components/mystery_card.rs` render the mystery groups and cards.
 - `app/src/components/footer.rs` renders the footer; `mod.rs` exposes the
