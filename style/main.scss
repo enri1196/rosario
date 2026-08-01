@@ -179,8 +179,10 @@ button, select { font: inherit; }
   grid-template-columns: repeat(3, 1fr);
   gap: 7px 22px;
   width: min(100%, 700px);
-  margin: -10px 0 16px;
-  padding: 0;
+  margin: 8px 0 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--gold-dim);
+  background: rgba(201, 168, 76, .06);
   list-style: none;
   color: var(--text-dim);
   font-size: 13px;
@@ -304,7 +306,7 @@ button, select { font: inherit; }
   .guide { padding-inline: 12px; }
   .creed-box { padding-inline: 12px; }
   .rosary { margin-block: -20px; }
-  .steps-legend { grid-template-columns: 1fr; margin-top: 0; }
+  .steps-legend { grid-template-columns: 1fr; margin-top: 8px; }
   .mysteries-grid { grid-template-columns: 1fr; }
 }
 
