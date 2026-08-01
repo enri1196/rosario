@@ -15,12 +15,31 @@ use tower::ServiceExt;
 use tower_http::services::ServeDir;
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
+    /// Resolves browser-only theme inputs before CSS loads so the
+    /// client-mounted application does not flash the wrong theme.
+    const THEME_BOOTSTRAP: &str = r#"(() => {
+        let theme;
+        try {
+            const saved = localStorage.getItem("rosary-theme");
+            if (saved === "dark" || saved === "light") theme = saved;
+        } catch (_) {}
+        if (!theme) {
+            try {
+                theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+            } catch (_) {
+                theme = "dark";
+            }
+        }
+        document.documentElement.dataset.theme = theme;
+    })();"#;
+
     view! {
         <!DOCTYPE html>
-        <html lang="it">
+        <html lang="it" data-theme="dark">
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <script>{THEME_BOOTSTRAP}</script>
                 <link rel="stylesheet" href="/pkg/rosary.css"/>
                 <AutoReload options=options.clone()/>
                 <HydrationScripts options/>
