@@ -94,6 +94,8 @@ the application composition and follow the data outward:
   copy here rather than hard-coding it in a component.
 - `app/src/components/header.rs` renders the title, language selector, skip
   link, and document-language update.
+- `app/src/components/guide_box.rs` provides the shared visual shell used by
+  the guide's bordered panels while preserving semantic inner elements.
 - `app/src/components/prayer_sidebar.rs` renders the five reusable prayers.
 - `app/src/components/rosary_guide.rs` renders the creed, rosary diagram,
   step legend, ending text, and decade note.

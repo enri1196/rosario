@@ -1,3 +1,4 @@
+use super::GuideBox;
 use crate::i18n::{Language, Translation};
 use leptos::prelude::*;
 
@@ -9,20 +10,22 @@ pub fn MysteryRecommendation(
     let recommendation = move || recommendation_for(CalendarDate::today(), language.get());
 
     view! {
-        <aside class="mystery-recommendation" aria-labelledby="mystery-recommendation-title">
-            <h3 id="mystery-recommendation-title">
-                {move || copy.get().mystery_recommendation_title}
-            </h3>
-            <p class="recommendation-date">
-                {move || recommendation().date}
-            </p>
-            <p class="recommendation-mystery">
-                <span class="recommendation-label">
-                    {move || copy.get().mystery_recommendation_pray_label}
-                </span>
-                {move || recommendation().mystery}
-            </p>
-        </aside>
+        <GuideBox>
+            <aside class="mystery-recommendation" aria-labelledby="mystery-recommendation-title">
+                <h3 id="mystery-recommendation-title">
+                    {move || copy.get().mystery_recommendation_title}
+                </h3>
+                <p class="recommendation-date">
+                    {move || recommendation().date}
+                </p>
+                <p class="recommendation-mystery">
+                    <span class="recommendation-label">
+                        {move || copy.get().mystery_recommendation_pray_label}
+                    </span>
+                    {move || recommendation().mystery}
+                </p>
+            </aside>
+        </GuideBox>
     }
 }
 

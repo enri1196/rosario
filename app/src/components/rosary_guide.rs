@@ -1,5 +1,5 @@
 use super::rosary_diagram::RosaryDiagram;
-use super::MysteryRecommendation;
+use super::{GuideBox, MysteryRecommendation};
 use crate::i18n::{Language, Translation};
 use leptos::prelude::*;
 
@@ -8,30 +8,38 @@ pub fn RosaryGuide(copy: Memo<Translation>, language: RwSignal<Language>) -> imp
     view! {
         <section class="guide" aria-labelledby="guide-heading">
             <h2 id="guide-heading" class="section-kicker">{move || copy.get().guide_title}</h2>
-            <article class="creed-box">
-                <h3>{move || copy.get().creed_title}</h3>
-                <p>{move || copy.get().creed}</p>
-            </article>
+            <GuideBox>
+                <article class="creed-box">
+                    <h3>{move || copy.get().creed_title}</h3>
+                    <p>{move || copy.get().creed}</p>
+                </article>
+            </GuideBox>
 
             <RosaryDiagram copy />
 
             <MysteryRecommendation copy language />
 
-            <ol class="steps-legend">
-                <For
-                    each=move || copy.get().steps.iter().copied().enumerate()
-                    key=|(_, step)| *step
-                    children=move |(index, step)| view! {
-                        <li><span class="step-num">{index + 1}</span><span>{step}</span></li>
-                    }
-                />
-            </ol>
+            <GuideBox>
+                <ol class="steps-legend">
+                    <For
+                        each=move || copy.get().steps.iter().copied().enumerate()
+                        key=|(_, step)| *step
+                        children=move |(index, step)| view! {
+                            <li><span class="step-num">{index + 1}</span><span>{step}</span></li>
+                        }
+                    />
+                </ol>
+            </GuideBox>
 
-            <div class="end-box">
-                <h3>{move || copy.get().ending_title}</h3>
-                <p>{move || copy.get().ending}</p>
-            </div>
-            <p class="note-box">{move || copy.get().decade_note}</p>
+            <GuideBox>
+                <div class="end-box">
+                    <h3>{move || copy.get().ending_title}</h3>
+                    <p>{move || copy.get().ending}</p>
+                </div>
+            </GuideBox>
+            <GuideBox>
+                <p class="note-box">{move || copy.get().decade_note}</p>
+            </GuideBox>
         </section>
     }
 }
