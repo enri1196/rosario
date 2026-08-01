@@ -30,7 +30,6 @@ pub fn Header(
                 <h1>{move || copy.get().heading}</h1>
                 <div class="header-controls">
                     <label class="language-picker">
-                        <span>{move || copy.get().language_label}</span>
                         <select
                             aria-label=move || copy.get().language_label
                             on:change=move |event| language.set(Language::from_code(&event_target_value(&event)))
