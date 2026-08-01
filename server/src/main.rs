@@ -39,6 +39,8 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <link rel="icon" href="/favicon.ico" sizes="any"/>
+                <link rel="icon" href="/favicon.png" type="image/png"/>
                 <script>{THEME_BOOTSTRAP}</script>
                 <link rel="stylesheet" href="/pkg/rosary.css"/>
                 <AutoReload options=options.clone()/>
