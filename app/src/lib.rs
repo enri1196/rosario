@@ -1,6 +1,7 @@
 mod calendar;
 mod components;
 mod i18n;
+mod theme;
 
 use components::{Footer, Header, MysteriesSection, PrayerSidebar, RosaryGuide};
 use i18n::{Language, Translation};
