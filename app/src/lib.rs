@@ -35,7 +35,7 @@ pub fn App() -> impl IntoView {
     view! {
         <Title text=move || copy.get().page_title />
         <div class="app-shell">
-            <Header language copy />
+            <Header language copy theme />
             <main id="main-content">
                 <div class="main-grid">
                     <PrayerSidebar copy />
