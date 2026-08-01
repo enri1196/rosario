@@ -39,7 +39,7 @@ pub(super) fn RosaryDiagram(copy: Memo<Translation>) -> impl IntoView {
                 <desc id="rosary-desc">{move || copy.get().decade_note}</desc>
                 <defs>
                     <radialGradient id="bead" cx="35%" cy="30%" r="65%">
-                        <stop offset="0%" stop-color="#eadb92"/><stop offset="100%" stop-color="#675022"/>
+                        <stop offset="0%" stop-color="var(--color-bead-highlight)"/><stop offset="100%" stop-color="var(--color-bead-shadow)"/>
                     </radialGradient>
                     <filter id="glow"><feGaussianBlur stdDeviation="1.2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
                 </defs>
