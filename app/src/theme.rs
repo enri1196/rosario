@@ -28,33 +28,38 @@ impl Theme {
             return Self::Dark;
         };
 
-        if let Some(saved_theme) = window
+        let saved_theme = window
             .local_storage()
             .ok()
             .flatten()
-            .and_then(|storage| storage.get_item(THEME_STORAGE_KEY).ok().flatten())
-            .and_then(|value| Self::from_attribute(&value))
-        {
-            return saved_theme;
-        }
-
+            .and_then(|storage| storage.get_item(THEME_STORAGE_KEY).ok().flatten());
         let prefers_light = window
             .match_media("(prefers-color-scheme: light)")
             .ok()
             .flatten()
-            .is_some_and(|query| query.matches());
+            .map(|query| query.matches());
 
-        if prefers_light {
-            Self::Light
-        } else {
-            Self::Dark
-        }
+        Self::resolve(saved_theme.as_deref(), prefers_light)
     }
 
     /// Returns the dark fallback when browser APIs are unavailable on a host.
     #[cfg(not(target_arch = "wasm32"))]
-    pub(crate) const fn from_browser() -> Self {
-        Self::Dark
+    pub(crate) fn from_browser() -> Self {
+        Self::resolve(None, None)
+    }
+
+    /// Resolves stored and media-query inputs into an effective theme.
+    ///
+    /// A valid explicit preference wins; otherwise a light media match selects
+    /// light mode and every missing or false input safely falls back to dark.
+    pub(crate) fn resolve(saved_theme: Option<&str>, prefers_light: Option<bool>) -> Self {
+        saved_theme.and_then(Self::from_attribute).unwrap_or(
+            if matches!(prefers_light, Some(true)) {
+                Self::Light
+            } else {
+                Self::Dark
+            },
+        )
     }
 
     /// Returns the value stored in and applied through `data-theme`.
@@ -111,7 +116,9 @@ pub(crate) fn persist_theme(theme: Theme) {
 
 /// Does nothing when persistence is requested outside a browser build.
 #[cfg(not(target_arch = "wasm32"))]
-pub(crate) const fn persist_theme(_theme: Theme) {}
+pub(crate) fn persist_theme(_theme: Theme) {
+    let _ = THEME_STORAGE_KEY;
+}
 
 #[cfg(test)]
 mod tests {
@@ -134,5 +141,24 @@ mod tests {
     fn toggles_between_effective_themes() {
         assert_eq!(Theme::Dark.toggle(), Theme::Light);
         assert_eq!(Theme::Light.toggle(), Theme::Dark);
+    }
+
+    #[test]
+    fn saved_theme_wins_over_media_preference() {
+        assert_eq!(Theme::resolve(Some("dark"), Some(true)), Theme::Dark);
+        assert_eq!(Theme::resolve(Some("light"), Some(false)), Theme::Light);
+    }
+
+    #[test]
+    fn invalid_or_missing_storage_uses_media_preference() {
+        assert_eq!(Theme::resolve(Some("system"), Some(true)), Theme::Light);
+        assert_eq!(Theme::resolve(None, Some(true)), Theme::Light);
+        assert_eq!(Theme::resolve(None, Some(false)), Theme::Dark);
+    }
+
+    #[test]
+    fn unavailable_browser_inputs_fall_back_to_dark() {
+        assert_eq!(Theme::resolve(None, None), Theme::Dark);
+        assert_eq!(Theme::resolve(Some(""), None), Theme::Dark);
     }
 }
