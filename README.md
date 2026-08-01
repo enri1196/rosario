@@ -6,8 +6,9 @@ A responsive, bilingual Rosary guide built with [Leptos](https://leptos.dev/). T
 
 - `app/src/components.rs` — reusable page and content components
 - `app/src/i18n.rs` — typed Italian and English translations
-- `app/src/lib.rs` — application composition and language state
-- `style/main.scss` — responsive visual design
+- `app/src/lib.rs` — application composition, language state, and theme state
+- `app/src/theme.rs` — theme resolution, root synchronization, and persistence
+- `style/main.scss` — responsive visual design and semantic theme tokens
 - `frontend` — WebAssembly entry point
 - `server` — static Axum server used by `cargo-leptos`
 
@@ -28,6 +29,14 @@ cargo leptos watch
 
 Open <http://127.0.0.1:3000>.
 
+## Themes
+
+The header’s sun/moon button switches between the dark and light themes
+without reloading. An explicit choice is stored under `rosary-theme`; when no
+choice is saved, the initial theme follows `prefers-color-scheme` and safely
+falls back to dark if browser APIs are unavailable. The effective mode is
+always exposed as `data-theme="dark"` or `data-theme="light"` on `<html>`.
+
 ## Checks
 
 ```bash
@@ -36,4 +45,6 @@ cargo check --workspace
 cargo leptos build
 ```
 
-The optional Playwright test in `end2end/tests/example.spec.ts` checks the initial Italian rendering and the English language switch.
+The Playwright tests in `end2end/tests` cover the initial bilingual rendering,
+language switching, theme initialization, persistence, keyboard operation,
+responsive control alignment, and the key visual surfaces in both themes.

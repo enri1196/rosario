@@ -93,6 +93,10 @@ the application composition and follow the data outward:
   data, typed mystery-set identifiers, labels, and the Italian/English
   content. Add user-visible bilingual copy here rather than hard-coding it in
   a component.
+- `app/src/theme.rs` owns the pure `Theme` model, initial browser resolution,
+  the `rosary-theme` storage boundary, and root `data-theme` synchronization.
+  `App` owns the shared theme signal and passes it to `Header`; the header only
+  changes the effective value.
 - `app/src/calendar.rs` contains the language-independent date arithmetic,
   weekday defaults, liturgical seasons, feast overrides, and pure calendar
   tests used by the recommendation.
@@ -112,11 +116,14 @@ the application composition and follow the data outward:
 - `app/src/components/footer.rs` renders the footer; `mod.rs` exposes the
   component module surface.
 - `style/main.scss` is the shared responsive visual system. Component class
-  names map directly to the selectors here.
+  names map directly to the selectors here. Theme colors must be expressed as
+  semantic custom-property tokens, with light-mode values overridden under
+  `[data-theme="light"]`; do not add theme literals to component markup.
 - `frontend` is the WebAssembly entry package; `server` serves the generated
   Leptos site and provides the Axum fallback to `index.html`.
-- `end2end` contains the Playwright browser checks for the initial rendering
-  and language switching.
+- `end2end` contains the Playwright browser checks for initial rendering,
+  language switching, theme resolution, persistence, accessibility, control
+  alignment, and critical surfaces in both themes.
 
 ## Fast start for a new feature
 
