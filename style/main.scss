@@ -261,7 +261,20 @@ button, select { font: inherit; }
 .chain { fill: none; stroke: var(--color-diagram-chain); stroke-width: 1.5; stroke-dasharray: 3 2; }
 .bead { fill: url(#bead); }
 .large-bead { fill: url(#bead); filter: url(#glow); }
-.cross { fill: var(--color-diagram-accent); }
+.cross {
+  fill: url(#cross-gold);
+  stroke: var(--color-bead-shadow);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  filter: url(#glow);
+}
+.cross-inlay {
+  fill: none;
+  stroke: var(--color-bead-highlight);
+  stroke-width: .8;
+  stroke-linecap: round;
+  opacity: .72;
+}
 .diagram-title { fill: var(--color-accent-bright); font: 600 14px "Cinzel", serif; letter-spacing: 1px; text-transform: uppercase; }
 .diagram-copy { fill: var(--color-diagram-copy); font: italic 13px "EB Garamond", serif; }
 

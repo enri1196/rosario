@@ -34,6 +34,17 @@ fn Bead(x: f64, y: f64, kind: BeadKind) -> impl IntoView {
     }
 }
 
+/// Renders the decorative cross at the end of the rosary pendant.
+#[component]
+fn RosaryCross() -> impl IntoView {
+    view! {
+        <g class="rosary-cross" aria-hidden="true">
+            <path d="M256 375Q260 372 264 375L265 387H274L278 392L274 397H266L267 413L260 418L253 413L254 397H246L242 392L246 387H255Z" class="cross"/>
+            <path d="M260 378V412M248 392H272" class="cross-inlay"/>
+        </g>
+    }
+}
+
 #[component]
 pub(super) fn RosaryDiagram(copy: Memo<Translation>) -> impl IntoView {
     const CENTER_X: f64 = 260.0;
@@ -74,6 +85,11 @@ pub(super) fn RosaryDiagram(copy: Memo<Translation>) -> impl IntoView {
                     <radialGradient id="bead" cx="35%" cy="30%" r="65%">
                         <stop offset="0%" stop-color="var(--color-bead-highlight)"/><stop offset="100%" stop-color="var(--color-bead-shadow)"/>
                     </radialGradient>
+                    <linearGradient id="cross-gold" x1="15%" y1="0%" x2="85%" y2="100%">
+                        <stop offset="0%" stop-color="var(--color-bead-highlight)"/>
+                        <stop offset="52%" stop-color="var(--color-diagram-accent)"/>
+                        <stop offset="100%" stop-color="var(--color-bead-shadow)"/>
+                    </linearGradient>
                     <filter id="glow"><feGaussianBlur stdDeviation="1.2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
                 </defs>
                 <ellipse cx=CENTER_X cy=CENTER_Y rx=RADIUS_X ry=RADIUS_Y class="chain"/>
@@ -89,7 +105,7 @@ pub(super) fn RosaryDiagram(copy: Memo<Translation>) -> impl IntoView {
                 <Bead x=260.0 y=330.0 kind=BeadKind::Pendant/>
                 <Bead x=260.0 y=345.0 kind=BeadKind::Pendant/>
                 <Bead x=260.0 y=363.0 kind=BeadKind::OurFather/>
-                <path d="M254 377h12v13h10v7h-10v21h-12v-21h-10v-7h10z" class="cross"/>
+                <RosaryCross/>
                 <text x="260" y="157" text-anchor="middle" class="diagram-title">{move || copy.get().hail_mary}</text>
                 <text x="260" y="174" text-anchor="middle" class="diagram-copy">"10 × 5"</text>
                 <text x="403" y="169" class="diagram-copy">{move || copy.get().our_father}</text>
