@@ -21,7 +21,7 @@ body {
   background: var(--background);
   color: var(--text);
   font-family: "EB Garamond", Georgia, serif;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.55;
 }
 
@@ -60,7 +60,7 @@ button, select { font: inherit; }
 
 .ornament {
   color: var(--gold-dim);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 6px;
 }
 
@@ -75,7 +75,7 @@ button, select { font: inherit; }
 .header-row h1 {
   margin: 0;
   color: var(--gold-light);
-  font: 900 clamp(25px, 4vw, 46px)/1.15 "Cinzel", serif;
+  font: 900 clamp(27px, 4vw, 48px)/1.15 "Cinzel", serif;
   letter-spacing: clamp(4px, .8vw, 10px);
   text-transform: uppercase;
   text-shadow: 0 0 30px rgba(201, 168, 76, .38);
@@ -87,7 +87,7 @@ button, select { font: inherit; }
   align-items: center;
   gap: 8px;
   color: var(--text-dim);
-  font: 600 10px "Cinzel", serif;
+  font: 600 11px "Cinzel", serif;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -121,7 +121,7 @@ button, select { font: inherit; }
   padding-bottom: 5px;
   border-bottom: 1px solid var(--gold-dim);
   color: var(--gold);
-  font: 700 11px "Cinzel", serif;
+  font: 700 12px "Cinzel", serif;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -129,9 +129,9 @@ button, select { font: inherit; }
 .prayer-block p {
   margin: 0;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: 17px;
   font-style: italic;
-  line-height: 1.62;
+  line-height: 1.55;
   white-space: pre-line;
 }
 
@@ -152,7 +152,7 @@ button, select { font: inherit; }
   text-transform: uppercase;
 }
 
-.section-kicker { margin: 0 0 17px; font-size: 12px; }
+.section-kicker { margin: 0 0 17px; font-size: 13px; }
 
 .creed-box {
   width: min(100%, 680px);
@@ -162,7 +162,7 @@ button, select { font: inherit; }
   text-align: center;
 }
 
-.creed-box p { margin: 0; color: var(--text-dim); font-size: 13px; font-style: italic; }
+.creed-box p { margin: 0; color: var(--text-dim); font-size: 15px; font-style: italic; }
 .creed-box h3 { border: 0; }
 
 .rosary-wrap { width: min(100%, 620px); }
@@ -171,8 +171,8 @@ button, select { font: inherit; }
 .bead { fill: url(#bead); }
 .large-bead { fill: url(#bead); filter: url(#glow); }
 .cross { fill: var(--gold); }
-.diagram-title { fill: var(--gold-light); font: 600 13px "Cinzel", serif; letter-spacing: 1px; text-transform: uppercase; }
-.diagram-copy { fill: var(--text-dim); font: italic 12px "EB Garamond", serif; }
+.diagram-title { fill: var(--gold-light); font: 600 14px "Cinzel", serif; letter-spacing: 1px; text-transform: uppercase; }
+.diagram-copy { fill: var(--text-dim); font: italic 13px "EB Garamond", serif; }
 
 .steps-legend {
   display: grid;
@@ -183,11 +183,11 @@ button, select { font: inherit; }
   padding: 0;
   list-style: none;
   color: var(--text-dim);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .steps-legend li { display: flex; gap: 7px; }
-.step-num { flex: 0 0 18px; color: var(--gold); font: 700 10px "Cinzel", serif; }
+.step-num { flex: 0 0 18px; color: var(--gold); font: 700 11px "Cinzel", serif; }
 
 .end-box, .note-box {
   width: min(100%, 700px);
@@ -197,12 +197,12 @@ button, select { font: inherit; }
 }
 .end-box { padding: 10px 16px; }
 .end-box h3 { border: 0; margin-bottom: 3px; }
-.end-box p, .note-box { color: var(--text-dim); font-size: 12px; }
+.end-box p, .note-box { color: var(--text-dim); font-size: 14px; }
 .end-box p { margin: 0; }
 .note-box { margin: 10px 0 0; padding: 9px 14px; font-style: italic; }
 
 .mysteries-section { padding: 30px clamp(16px, 3vw, 42px) 42px; background: var(--background-mid); }
-.section-title { margin: 0 0 28px; font-size: 16px; }
+.section-title { margin: 0 0 28px; font-size: 18px; }
 
 .mysteries-grid {
   display: grid;
@@ -220,7 +220,7 @@ button, select { font: inherit; }
   padding: 0 5px 10px;
   border-bottom: 1px solid var(--gold-dim);
   color: var(--gold-light);
-  font: 700 12px "Cinzel", serif;
+  font: 700 13px "Cinzel", serif;
   letter-spacing: 2px;
   text-align: center;
   text-transform: uppercase;
@@ -246,14 +246,14 @@ button, select { font: inherit; }
 .mystery-card h4 {
   margin: 9px 0 6px;
   color: var(--gold);
-  font: 600 10px "Cinzel", serif;
+  font: 600 11px "Cinzel", serif;
   letter-spacing: 1px;
   text-align: center;
   text-transform: uppercase;
 }
-.mystery-card > p { margin: 0; color: var(--text-dim); font-size: 12px; font-style: italic; }
+.mystery-card > p { margin: 0; color: var(--text-dim); font-size: 14px; font-style: italic; }
 .mystery-card .mystery-fruit { margin-top: 8px; color: var(--text); font-style: normal; }
-.mystery-fruit strong { display: block; color: var(--gold); font: 600 9px "Cinzel", serif; letter-spacing: .5px; text-transform: uppercase; }
+.mystery-fruit strong { display: block; color: var(--gold); font: 600 10px "Cinzel", serif; letter-spacing: .5px; text-transform: uppercase; }
 
 @supports (grid-template-rows: subgrid) {
   .mystery-group {
@@ -277,7 +277,7 @@ button, select { font: inherit; }
   padding: 13px clamp(16px, 3vw, 42px);
   border-top: 1px solid var(--gold-dim);
   color: var(--gold-dim);
-  font: 600 10px "Cinzel", serif;
+  font: 600 11px "Cinzel", serif;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -299,7 +299,7 @@ button, select { font: inherit; }
 
 @media (max-width: 500px) {
   .site-header { padding-inline: 12px; }
-  .header-row h1 { font-size: 25px; }
+  .header-row h1 { font-size: 27px; }
   .ornament { letter-spacing: 3px; }
   .guide { padding-inline: 12px; }
   .creed-box { padding-inline: 12px; }
