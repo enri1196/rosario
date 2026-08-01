@@ -45,8 +45,31 @@ pub struct Mystery {
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct MysteryGroup {
-    pub title: &'static str,
+    pub set: MysterySet,
     pub mysteries: &'static [Mystery; 5],
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub enum MysterySet {
+    Joyful,
+    Luminous,
+    Sorrowful,
+    Glorious,
+}
+
+impl MysterySet {
+    pub const fn label(self, language: Language) -> &'static str {
+        match (language, self) {
+            (Language::Italian, Self::Joyful) => "Misteri Gaudiosi",
+            (Language::Italian, Self::Luminous) => "Misteri Luminosi",
+            (Language::Italian, Self::Sorrowful) => "Misteri Dolorosi",
+            (Language::Italian, Self::Glorious) => "Misteri Gloriosi",
+            (Language::English, Self::Joyful) => "Joyful Mysteries",
+            (Language::English, Self::Luminous) => "Luminous Mysteries",
+            (Language::English, Self::Sorrowful) => "Sorrowful Mysteries",
+            (Language::English, Self::Glorious) => "Glorious Mysteries",
+        }
+    }
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -159,37 +182,37 @@ const EN_GLORIOUS: [Mystery; 5] = [
 
 const IT_GROUPS: [MysteryGroup; 4] = [
     MysteryGroup {
-        title: "Misteri Gaudiosi",
+        set: MysterySet::Joyful,
         mysteries: &IT_JOYFUL,
     },
     MysteryGroup {
-        title: "Misteri Luminosi",
+        set: MysterySet::Luminous,
         mysteries: &IT_LUMINOUS,
     },
     MysteryGroup {
-        title: "Misteri Dolorosi",
+        set: MysterySet::Sorrowful,
         mysteries: &IT_SORROWFUL,
     },
     MysteryGroup {
-        title: "Misteri Gloriosi",
+        set: MysterySet::Glorious,
         mysteries: &IT_GLORIOUS,
     },
 ];
 const EN_GROUPS: [MysteryGroup; 4] = [
     MysteryGroup {
-        title: "Joyful Mysteries",
+        set: MysterySet::Joyful,
         mysteries: &EN_JOYFUL,
     },
     MysteryGroup {
-        title: "Luminous Mysteries",
+        set: MysterySet::Luminous,
         mysteries: &EN_LUMINOUS,
     },
     MysteryGroup {
-        title: "Sorrowful Mysteries",
+        set: MysterySet::Sorrowful,
         mysteries: &EN_SORROWFUL,
     },
     MysteryGroup {
-        title: "Glorious Mysteries",
+        set: MysterySet::Glorious,
         mysteries: &EN_GLORIOUS,
     },
 ];

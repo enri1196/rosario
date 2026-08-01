@@ -1,3 +1,4 @@
+mod calendar;
 mod components;
 mod i18n;
 
@@ -22,7 +23,7 @@ pub fn App() -> impl IntoView {
                     <PrayerSidebar copy />
                 <RosaryGuide copy language />
                 </div>
-                <MysteriesSection copy />
+                <MysteriesSection copy language />
             </main>
             <Footer copy />
         </div>

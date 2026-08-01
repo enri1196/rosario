@@ -90,8 +90,12 @@ the application composition and follow the data outward:
   language signal and derives the shared `Memo<Translation>` passed to the
   page components.
 - `app/src/i18n.rs` contains `Language`, `Translation`, prayer text, mystery
-  data, labels, and the Italian/English content. Add user-visible bilingual
-  copy here rather than hard-coding it in a component.
+  data, typed mystery-set identifiers, labels, and the Italian/English
+  content. Add user-visible bilingual copy here rather than hard-coding it in
+  a component.
+- `app/src/calendar.rs` contains the language-independent date arithmetic,
+  weekday defaults, liturgical seasons, feast overrides, and pure calendar
+  tests used by the recommendation.
 - `app/src/components/header.rs` renders the title, language selector, skip
   link, and document-language update.
 - `app/src/components/guide_box.rs` provides the shared visual shell used by
@@ -100,9 +104,9 @@ the application composition and follow the data outward:
 - `app/src/components/rosary_guide.rs` renders the creed, rosary diagram,
   step legend, ending text, and decade note.
 - `app/src/components/rosary_diagram.rs` owns the diagram SVG and its labels.
-- `app/src/components/mystery_recommendation.rs` derives the current local
-  date, weekday, liturgical season, and major feast overrides, then suggests
-  the corresponding mystery set.
+- `app/src/components/mystery_recommendation.rs` formats the current date and
+  localized mystery-set label, then renders the recommendation box. Keep
+  calendar rules in `calendar.rs` rather than adding them here.
 - `app/src/components/mysteries_section.rs` and
   `app/src/components/mystery_card.rs` render the mystery groups and cards.
 - `app/src/components/footer.rs` renders the footer; `mod.rs` exposes the
