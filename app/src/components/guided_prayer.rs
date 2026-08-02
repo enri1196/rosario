@@ -11,6 +11,7 @@ pub fn GuidedPrayer(
     copy: Memo<Translation>,
     language: RwSignal<Language>,
     session: RwSignal<Option<RosarySession>>,
+    intention: RwSignal<Option<String>>,
 ) -> impl IntoView {
     let step_heading = NodeRef::<html::H4>::new();
     let was_open = Cell::new(false);
@@ -57,6 +58,22 @@ pub fn GuidedPrayer(
                             </p>
                         </Show>
                     </div>
+
+                    <Show when=move || {
+                        intention.get().is_some()
+                            && session.get().is_some_and(|current| {
+                                current.is_first_step() || current.is_complete()
+                            })
+                    }>
+                        <div class="guided-intention">
+                            <p class="guided-intention-label">
+                                {move || copy.get().guided_intention_label}
+                            </p>
+                            <p class="guided-intention-text">
+                                {move || intention.get().unwrap_or_default()}
+                            </p>
+                        </div>
+                    </Show>
 
                     <Show when=move || session.get().is_some_and(|current| !current.is_complete())>
                         <p class="guided-progress" aria-live="polite" aria-atomic="true">

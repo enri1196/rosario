@@ -176,6 +176,18 @@ pub struct Translation {
     pub guided_completion_title: &'static str,
     pub guided_completion_message: &'static str,
     pub guided_pray_mystery_label: &'static str,
+    pub guided_intention_label: &'static str,
+    pub intention_title: &'static str,
+    pub intention_label: &'static str,
+    pub intention_help: &'static str,
+    pub intention_save_label: &'static str,
+    pub intention_clear_label: &'static str,
+    pub intention_character_count_label: &'static str,
+    pub intention_empty_error: &'static str,
+    pub intention_too_long_error: &'static str,
+    pub intention_saved_status: &'static str,
+    pub intention_cleared_status: &'static str,
+    pub intention_storage_error: &'static str,
     pub mysteries_heading: &'static str,
     pub groups: &'static [MysteryGroup; 4],
     pub fruit_label: &'static str,
@@ -311,7 +323,8 @@ pub const IT: Translation = Translation {
     guide_title: "Come recitare il Rosario", our_father: "Padre Nostro", hail_mary: "Ave Maria",
     steps: &["Segno della Croce", "Credo degli Apostoli", "Padre Nostro", "Tre Ave Maria", "Gloria al Padre", "O Mio Gesù", "Intenzione", "Annunciare e meditare il Mistero", "Ripetere per cinque decine"],
     ending_title: "Al termine", ending: "Salve Regina · Preghiera personale · Segno della Croce", decade_note: "Per ogni decina: annuncia il Mistero e meditalo mentre reciti un Padre Nostro, dieci Ave Maria, il Gloria e O Mio Gesù.",
-    guided_start_label: "Avvia il Rosario guidato", guided_title: "Rosario guidato", guided_close_label: "Chiudi il Rosario guidato", guided_step_label: "Passo", guided_of_label: "di", guided_mystery_set_label: "Misteri scelti", guided_selected_mystery_label: "Mistero scelto", guided_decade_label: "Decina", guided_ten_hail_marys_label: "Dieci Ave Maria", guided_previous_label: "Indietro", guided_next_label: "Avanti", guided_reset_label: "Ricomincia", guided_finish_label: "Completa il Rosario", guided_restart_label: "Prega di nuovo", guided_completion_title: "Rosario completato", guided_completion_message: "Hai completato il Rosario. Prenditi un momento di silenzio prima di continuare.", guided_pray_mystery_label: "Prega questo Mistero",
+    guided_start_label: "Avvia il Rosario guidato", guided_title: "Rosario guidato", guided_close_label: "Chiudi il Rosario guidato", guided_step_label: "Passo", guided_of_label: "di", guided_mystery_set_label: "Misteri scelti", guided_selected_mystery_label: "Mistero scelto", guided_decade_label: "Decina", guided_ten_hail_marys_label: "Dieci Ave Maria", guided_previous_label: "Indietro", guided_next_label: "Avanti", guided_reset_label: "Ricomincia", guided_finish_label: "Completa il Rosario", guided_restart_label: "Prega di nuovo", guided_completion_title: "Rosario completato", guided_completion_message: "Hai completato il Rosario. Prenditi un momento di silenzio prima di continuare.", guided_pray_mystery_label: "Prega questo Mistero", guided_intention_label: "Intenzione affidata",
+    intention_title: "Intenzione di preghiera", intention_label: "La tua intenzione", intention_help: "Rimane privata e viene salvata solo in questo browser.", intention_save_label: "Salva intenzione", intention_clear_label: "Cancella intenzione", intention_character_count_label: "Caratteri", intention_empty_error: "Scrivi un'intenzione prima di salvarla, oppure usa Cancella intenzione.", intention_too_long_error: "L'intenzione non può superare 500 caratteri.", intention_saved_status: "Intenzione salvata in questo browser.", intention_cleared_status: "Intenzione cancellata.", intention_storage_error: "La modifica è attiva in questa pagina, ma il browser non ha permesso di salvarla.",
     mysteries_heading: "I venti Misteri", groups: &IT_GROUPS, fruit_label: "Frutto del Mistero", version: "Versione italiana",
 };
 
@@ -324,7 +337,8 @@ pub const EN: Translation = Translation {
     guide_title: "How to pray the Rosary", our_father: "Our Father", hail_mary: "Hail Mary",
     steps: &["Sign of the Cross", "Apostles' Creed", "Our Father", "Three Hail Marys", "Glory Be", "O My Jesus", "Prayer intention", "Announce and meditate on the Mystery", "Repeat for five decades"],
     ending_title: "To conclude", ending: "Hail, Holy Queen · Personal prayer · Sign of the Cross", decade_note: "For each decade: announce the Mystery and meditate on it while praying one Our Father, ten Hail Marys, the Glory Be and O My Jesus.",
-    guided_start_label: "Start guided Rosary", guided_title: "Guided Rosary", guided_close_label: "Close guided Rosary", guided_step_label: "Step", guided_of_label: "of", guided_mystery_set_label: "Selected Mysteries", guided_selected_mystery_label: "Selected Mystery", guided_decade_label: "Decade", guided_ten_hail_marys_label: "Ten Hail Marys", guided_previous_label: "Previous", guided_next_label: "Next", guided_reset_label: "Reset", guided_finish_label: "Complete the Rosary", guided_restart_label: "Pray again", guided_completion_title: "Rosary complete", guided_completion_message: "You have completed the Rosary. Take a moment of silence before continuing.", guided_pray_mystery_label: "Pray this Mystery",
+    guided_start_label: "Start guided Rosary", guided_title: "Guided Rosary", guided_close_label: "Close guided Rosary", guided_step_label: "Step", guided_of_label: "of", guided_mystery_set_label: "Selected Mysteries", guided_selected_mystery_label: "Selected Mystery", guided_decade_label: "Decade", guided_ten_hail_marys_label: "Ten Hail Marys", guided_previous_label: "Previous", guided_next_label: "Next", guided_reset_label: "Reset", guided_finish_label: "Complete the Rosary", guided_restart_label: "Pray again", guided_completion_title: "Rosary complete", guided_completion_message: "You have completed the Rosary. Take a moment of silence before continuing.", guided_pray_mystery_label: "Pray this Mystery", guided_intention_label: "Prayer intention",
+    intention_title: "Prayer intention", intention_label: "Your intention", intention_help: "It stays private and is saved only in this browser.", intention_save_label: "Save intention", intention_clear_label: "Clear intention", intention_character_count_label: "Characters", intention_empty_error: "Write an intention before saving, or use Clear intention.", intention_too_long_error: "The intention cannot exceed 500 characters.", intention_saved_status: "Intention saved in this browser.", intention_cleared_status: "Intention cleared.", intention_storage_error: "The change is active on this page, but the browser did not allow it to be saved.",
     mysteries_heading: "The twenty Mysteries", groups: &EN_GROUPS, fruit_label: "Fruit of the Mystery", version: "English version",
 };
 

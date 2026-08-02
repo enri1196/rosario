@@ -1,5 +1,5 @@
 use super::rosary_diagram::RosaryDiagram;
-use super::{GuideBox, GuidedPrayer, MysteryRecommendation};
+use super::{GuideBox, GuidedPrayer, MysteryRecommendation, PrayerIntention};
 use crate::calendar::{recommendation_for, CalendarDate};
 use crate::i18n::{Language, Translation};
 use crate::rosary_session::RosarySession;
@@ -10,10 +10,12 @@ pub fn RosaryGuide(
     copy: Memo<Translation>,
     language: RwSignal<Language>,
     guided_session: RwSignal<Option<RosarySession>>,
+    intention: RwSignal<Option<String>>,
 ) -> impl IntoView {
     view! {
         <section class="guide" aria-labelledby="guide-heading">
             <h2 id="guide-heading" class="section-kicker">{move || copy.get().guide_title}</h2>
+            <PrayerIntention copy intention />
             <button
                 type="button"
                 class="guided-start-button"
@@ -25,7 +27,7 @@ pub fn RosaryGuide(
                 {move || copy.get().guided_start_label}
             </button>
 
-            <GuidedPrayer copy language session=guided_session />
+            <GuidedPrayer copy language session=guided_session intention />
 
             <GuideBox>
                 <article class="creed-box">

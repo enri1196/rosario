@@ -89,7 +89,7 @@ body {
 
 .app-shell { min-height: 100vh; overflow: hidden; }
 
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
 
 .visually-hidden {
   position: absolute;
@@ -290,7 +290,9 @@ button, input, select { font: inherit; }
 .guided-primary-button,
 .guided-secondary-button,
 .guided-close-button,
-.mystery-pray-button {
+.mystery-pray-button,
+.intention-save-button,
+.intention-clear-button {
   min-height: 44px;
   border: 1px solid var(--color-surface-border);
   border-radius: var(--radius-small);
@@ -300,7 +302,8 @@ button, input, select { font: inherit; }
 
 .guided-start-button,
 .guided-primary-button,
-.mystery-pray-button {
+.mystery-pray-button,
+.intention-save-button {
   background: var(--color-accent-bright);
   color: var(--color-on-bright-accent);
 }
@@ -311,7 +314,8 @@ button, input, select { font: inherit; }
 }
 
 .guided-secondary-button,
-.guided-close-button {
+.guided-close-button,
+.intention-clear-button {
   background: var(--color-control-background);
   color: var(--color-text-primary);
 }
@@ -320,7 +324,10 @@ button, input, select { font: inherit; }
 .guided-primary-button:focus-visible,
 .guided-secondary-button:focus-visible,
 .guided-close-button:focus-visible,
-.mystery-pray-button:focus-visible {
+.mystery-pray-button:focus-visible,
+.intention-save-button:focus-visible,
+.intention-clear-button:focus-visible,
+.prayer-intention textarea:focus-visible {
   outline: 3px solid var(--color-focus-outline);
   outline-offset: 2px;
 }
@@ -328,6 +335,77 @@ button, input, select { font: inherit; }
 .guided-secondary-button:disabled {
   cursor: not-allowed;
   opacity: .48;
+}
+
+.prayer-intention {
+  padding: clamp(18px, 4vw, 26px);
+}
+
+.prayer-intention h3 {
+  margin: 0 0 14px;
+  color: var(--color-accent);
+  font: 600 11px "DM Sans", sans-serif;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.prayer-intention label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-text-primary);
+  font: 600 13px "DM Sans", sans-serif;
+}
+
+.prayer-intention textarea {
+  display: block;
+  width: 100%;
+  min-height: 128px;
+  resize: vertical;
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-small);
+  padding: 10px 12px;
+  background: var(--color-control-background);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+.intention-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 7px;
+}
+
+.intention-help,
+.intention-count,
+.intention-feedback {
+  margin: 0;
+  color: var(--color-text-dim);
+  font: 400 12px/1.45 "DM Sans", sans-serif;
+}
+
+.intention-count {
+  flex: 0 0 auto;
+}
+
+.intention-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.intention-actions button {
+  padding: 9px 16px;
+}
+
+.intention-feedback {
+  min-height: 1.45em;
+  margin-top: 8px;
+}
+
+.intention-error {
+  color: var(--color-error);
 }
 
 .guided-prayer {
@@ -384,6 +462,33 @@ button, input, select { font: inherit; }
 .guided-session-meta strong {
   color: var(--color-text-primary);
   font-weight: 600;
+}
+
+.guided-intention {
+  margin-top: 16px;
+  border-inline-start: 3px solid var(--color-accent);
+  border-radius: 0 var(--radius-small) var(--radius-small) 0;
+  padding: 10px 14px;
+  background: var(--color-control-background);
+}
+
+.guided-intention-label,
+.guided-intention-text {
+  margin: 0;
+}
+
+.guided-intention-label {
+  color: var(--color-accent);
+  font: 600 10px "DM Sans", sans-serif;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+
+.guided-intention-text {
+  margin-top: 3px;
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .guided-progress { margin-top: 18px; }
@@ -746,6 +851,9 @@ button, input, select { font: inherit; }
   .guided-navigation { display: grid; grid-template-columns: 1fr; }
   .guided-navigation button,
   .guided-completion button { min-height: 48px; width: 100%; }
+  .intention-meta { flex-direction: column; gap: 4px; }
+  .intention-actions { display: grid; grid-template-columns: 1fr; }
+  .intention-actions button { min-height: 48px; width: 100%; }
   .mysteries-grid { grid-template-columns: 1fr; }
   .mysteries-section { padding-inline: 12px; }
 }
