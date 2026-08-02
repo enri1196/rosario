@@ -39,8 +39,12 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="theme-color" content="#0a0d14" media="(prefers-color-scheme: dark)"/>
+                <meta name="theme-color" content="#f4f0e7" media="(prefers-color-scheme: light)"/>
                 <link rel="icon" href="/favicon.ico" sizes="any"/>
                 <link rel="icon" href="/favicon.png" type="image/png"/>
+                <link rel="apple-touch-icon" href="/icons/rosary-192.png" sizes="192x192"/>
+                <link rel="manifest" href="/manifest.webmanifest"/>
                 <script>{THEME_BOOTSTRAP}</script>
                 <link rel="stylesheet" href="/pkg/rosary.css"/>
                 <AutoReload options=options.clone()/>

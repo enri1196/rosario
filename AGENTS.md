@@ -148,11 +148,16 @@ the application composition and follow the data outward:
   semantic custom-property tokens, with light-mode values overridden under
   `[data-theme="light"]`; do not add theme literals to component markup.
 - `frontend` is the WebAssembly entry package; `server` serves the generated
-  Leptos site and provides the Axum fallback to `index.html`.
+  Leptos site and provides the Axum fallback to `index.html`. The frontend
+  registers the root-scoped service worker only after mounting the client app.
+- `public` owns source-controlled static assets copied into `target/site`,
+  including the existing favicons, install manifest, PWA icons, and versioned
+  service worker. Increment the worker cache version when its application-shell
+  entries change; never add a second static-asset pipeline.
 - `end2end` contains the Playwright browser checks for initial rendering,
   language switching, theme resolution, guided prayer, private intention tag
-  editing and persistence, accessibility, control alignment, and critical
-  surfaces in both themes.
+  editing and persistence, PWA installability and offline behavior,
+  accessibility, control alignment, and critical surfaces in both themes.
 
 ## Fast start for a new feature
 
