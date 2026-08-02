@@ -1,13 +1,32 @@
 use super::rosary_diagram::RosaryDiagram;
-use super::{GuideBox, MysteryRecommendation};
+use super::{GuideBox, GuidedPrayer, MysteryRecommendation};
+use crate::calendar::{recommendation_for, CalendarDate};
 use crate::i18n::{Language, Translation};
+use crate::rosary_session::RosarySession;
 use leptos::prelude::*;
 
 #[component]
-pub fn RosaryGuide(copy: Memo<Translation>, language: RwSignal<Language>) -> impl IntoView {
+pub fn RosaryGuide(
+    copy: Memo<Translation>,
+    language: RwSignal<Language>,
+    guided_session: RwSignal<Option<RosarySession>>,
+) -> impl IntoView {
     view! {
         <section class="guide" aria-labelledby="guide-heading">
             <h2 id="guide-heading" class="section-kicker">{move || copy.get().guide_title}</h2>
+            <button
+                type="button"
+                class="guided-start-button"
+                on:click=move |_| {
+                    let recommended = recommendation_for(CalendarDate::today()).mystery;
+                    guided_session.set(Some(RosarySession::start(recommended)));
+                }
+            >
+                {move || copy.get().guided_start_label}
+            </button>
+
+            <GuidedPrayer copy language session=guided_session />
+
             <GuideBox>
                 <article class="creed-box">
                     <h3>{move || copy.get().creed_title}</h3>

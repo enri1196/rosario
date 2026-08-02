@@ -1,12 +1,14 @@
 mod calendar;
 mod components;
 mod i18n;
+mod rosary_session;
 mod theme;
 
 use components::{Footer, Header, MysteriesSection, PrayerSidebar, RosaryGuide};
 use i18n::{Language, Translation};
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, Title};
+use rosary_session::RosarySession;
 use std::cell::Cell;
 use theme::{apply_theme, persist_theme, Theme};
 
@@ -17,6 +19,7 @@ pub fn App() -> impl IntoView {
     let language = RwSignal::new(Language::from_browser());
     let copy = Memo::new(move |_| Translation::for_language(language.get()));
     let theme = RwSignal::new(Theme::from_browser());
+    let guided_session = RwSignal::<Option<RosarySession>>::new(None);
     let is_initial_theme = Cell::new(true);
 
     Effect::new(move |_| {
@@ -39,9 +42,9 @@ pub fn App() -> impl IntoView {
             <main id="main-content">
                 <div class="main-grid">
                     <PrayerSidebar copy />
-                <RosaryGuide copy language />
+                <RosaryGuide copy language guided_session />
                 </div>
-                <MysteriesSection copy language />
+                <MysteriesSection copy language guided_session />
             </main>
             <Footer copy />
         </div>

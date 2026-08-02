@@ -286,6 +286,165 @@ button, input, select { font: inherit; }
 
 .section-kicker { margin: 0 0 20px; font-size: 12px; letter-spacing: 4px; }
 
+.guided-start-button,
+.guided-primary-button,
+.guided-secondary-button,
+.guided-close-button,
+.mystery-pray-button {
+  min-height: 44px;
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  font: 600 13px "DM Sans", sans-serif;
+}
+
+.guided-start-button,
+.guided-primary-button,
+.mystery-pray-button {
+  background: var(--color-accent-bright);
+  color: var(--color-on-bright-accent);
+}
+
+.guided-start-button {
+  margin: 0 0 10px;
+  padding: 9px 20px;
+}
+
+.guided-secondary-button,
+.guided-close-button {
+  background: var(--color-control-background);
+  color: var(--color-text-primary);
+}
+
+.guided-start-button:focus-visible,
+.guided-primary-button:focus-visible,
+.guided-secondary-button:focus-visible,
+.guided-close-button:focus-visible,
+.mystery-pray-button:focus-visible {
+  outline: 3px solid var(--color-focus-outline);
+  outline-offset: 2px;
+}
+
+.guided-secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: .48;
+}
+
+.guided-prayer {
+  padding: clamp(18px, 4vw, 30px);
+}
+
+.guided-prayer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-card-divider);
+}
+
+.guided-prayer-header h3,
+.guided-prayer h4 {
+  margin: 0;
+  color: var(--color-accent-bright);
+  font-family: "Cinzel", serif;
+}
+
+.guided-prayer-header h3 {
+  font-size: 17px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.guided-close-button { padding: 8px 14px; }
+
+.guided-session-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 18px;
+  margin: 14px 0 4px;
+}
+
+.guided-session-meta p,
+.guided-progress,
+.guided-active-decade,
+.guided-closing-note,
+.guided-completion p {
+  margin: 0;
+}
+
+.guided-session-meta span,
+.guided-progress {
+  color: var(--color-accent);
+  font: 600 10px "DM Sans", sans-serif;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+
+.guided-session-meta strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.guided-progress { margin-top: 18px; }
+
+.guided-prayer h4 {
+  margin-top: 8px;
+  font-size: clamp(20px, 4vw, 27px);
+  line-height: 1.25;
+}
+
+.guided-prayer h4:focus-visible {
+  outline: 3px solid var(--color-focus-outline);
+  outline-offset: 4px;
+}
+
+.guided-step-content { margin-top: 14px; }
+
+.guided-active-decade {
+  margin-bottom: 10px;
+  color: var(--color-accent);
+  font: 600 12px "DM Sans", sans-serif;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.guided-prayer-text {
+  margin: 0;
+  color: var(--color-text-dim);
+  font-size: 18px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.guided-closing-note {
+  margin-top: 14px;
+  color: var(--color-text-primary);
+  font-style: italic;
+}
+
+.guided-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-card-divider);
+}
+
+.guided-navigation button,
+.guided-completion button {
+  padding: 9px 16px;
+}
+
+.guided-completion {
+  margin-top: 14px;
+  color: var(--color-text-dim);
+}
+
+.guided-completion button { margin-top: 18px; }
+
 .creed-box {
   padding: 18px 24px;
   text-align: center;
@@ -495,7 +654,7 @@ button, input, select { font: inherit; }
 .mystery-list { display: grid; gap: 14px; }
 .mystery-card {
   display: grid;
-  grid-template-rows: 92px minmax(2.4em, auto) 1fr auto;
+  grid-template-rows: 92px minmax(2.4em, auto) 1fr auto auto;
   min-width: 0;
   padding: 12px 12px 16px;
   border: 1px solid var(--color-card-divider);
@@ -529,6 +688,7 @@ button, input, select { font: inherit; }
 .mystery-card > p { margin: 0 2px; color: var(--color-text-dim); font-size: 15px; font-style: italic; }
 .mystery-card .mystery-fruit { margin-top: 8px; color: var(--color-text-primary); font-style: normal; }
 .mystery-fruit strong { display: block; color: var(--color-accent); font: 600 9px "DM Sans", sans-serif; letter-spacing: .8px; text-transform: uppercase; }
+.mystery-pray-button { margin-top: 14px; padding: 8px 12px; }
 
 @supports (grid-template-rows: subgrid) {
   .mystery-group {
@@ -580,6 +740,12 @@ button, input, select { font: inherit; }
   .creed-box { padding-inline: 12px; }
   .rosary { margin-block: -20px; }
   .steps-legend { grid-template-columns: 1fr; }
+  .guided-prayer { padding-inline: 14px; }
+  .guided-prayer-header { align-items: flex-start; flex-direction: column; }
+  .guided-close-button { width: 100%; }
+  .guided-navigation { display: grid; grid-template-columns: 1fr; }
+  .guided-navigation button,
+  .guided-completion button { min-height: 48px; width: 100%; }
   .mysteries-grid { grid-template-columns: 1fr; }
   .mysteries-section { padding-inline: 12px; }
 }
