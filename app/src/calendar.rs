@@ -36,6 +36,41 @@ impl CalendarDate {
         Self::new(2026, 1, 1, 4)
     }
 
+    pub(crate) fn from_input_value(value: &str) -> Option<Self> {
+        let mut parts = value.split('-');
+        let year = parts.next()?;
+        let month = parts.next()?;
+        let day = parts.next()?;
+
+        if parts.next().is_some()
+            || year.len() != 4
+            || month.len() != 2
+            || day.len() != 2
+            || !value
+                .chars()
+                .all(|character| character.is_ascii_digit() || character == '-')
+        {
+            return None;
+        }
+
+        let year = year.parse::<i32>().ok()?;
+        let month = month.parse::<u32>().ok()?;
+        let day = day.parse::<u32>().ok()?;
+        if year < 1
+            || !(1..=12).contains(&month)
+            || !(1..=days_in_month(year, month)).contains(&day)
+        {
+            return None;
+        }
+
+        let date = Self::new(year, month, day, 0);
+        Some(Self::new(year, month, day, weekday_for(date)))
+    }
+
+    pub(crate) fn to_input_value(self) -> String {
+        format!("{:04}-{:02}-{:02}", self.year, self.month, self.day)
+    }
+
     fn serial(self) -> i64 {
         let year = i64::from(self.year - 1);
         let leap_days = year / 4 - year / 100 + year / 400;
@@ -44,26 +79,44 @@ impl CalendarDate {
     }
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum RecommendationBasis {
+    Weekday,
+    Advent,
+    ChristmasPeriod,
+    Lent,
+    EasterSeason,
+    FeastOverride,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub(crate) struct Recommendation {
     pub(crate) date: CalendarDate,
     pub(crate) mystery: MysterySet,
+    pub(crate) basis: RecommendationBasis,
 }
 
 pub(crate) fn recommendation_for(date: CalendarDate) -> Recommendation {
     let easter = easter_sunday(date.year);
-    let mystery = if is_christmas_period(date) || is_advent(date) {
-        MysterySet::Joyful
+    let (mystery, basis) = if is_christmas_period(date) {
+        (MysterySet::Joyful, RecommendationBasis::ChristmasPeriod)
+    } else if is_advent(date) {
+        (MysterySet::Joyful, RecommendationBasis::Advent)
     } else if let Some(mystery) = special_feast(date, easter) {
-        mystery
+        (mystery, RecommendationBasis::FeastOverride)
     } else if is_between(date, easter, add_days(easter, 49)) {
-        MysterySet::Glorious
+        (MysterySet::Glorious, RecommendationBasis::EasterSeason)
     } else if is_between(date, add_days(easter, -46), add_days(easter, -1)) {
-        MysterySet::Sorrowful
+        (MysterySet::Sorrowful, RecommendationBasis::Lent)
     } else {
-        weekday_mystery(date.weekday)
+        (weekday_mystery(date.weekday), RecommendationBasis::Weekday)
     };
 
-    Recommendation { date, mystery }
+    Recommendation {
+        date,
+        mystery,
+        basis,
+    }
 }
 
 fn weekday_mystery(weekday: u32) -> MysterySet {
@@ -199,6 +252,10 @@ fn is_leap_year(year: i32) -> bool {
 mod tests {
     use super::*;
 
+    fn input_date(value: &str) -> CalendarDate {
+        CalendarDate::from_input_value(value).expect("test date should be valid")
+    }
+
     #[test]
     fn calculates_gregorian_easter() {
         assert!(same_day(
@@ -209,20 +266,132 @@ mod tests {
 
     #[test]
     fn recommends_sorrowful_mysteries_during_lent() {
-        let recommendation = recommendation_for(CalendarDate::new(2026, 2, 18, 3));
+        let recommendation = recommendation_for(input_date("2026-02-18"));
         assert!(matches!(recommendation.mystery, MysterySet::Sorrowful));
+        assert_eq!(recommendation.basis, RecommendationBasis::Lent);
     }
 
     #[test]
     fn recommends_joyful_mysteries_during_advent() {
-        let recommendation = recommendation_for(CalendarDate::new(2026, 12, 1, 2));
+        let recommendation = recommendation_for(input_date("2026-12-01"));
         assert!(matches!(recommendation.mystery, MysterySet::Joyful));
+        assert_eq!(recommendation.basis, RecommendationBasis::Advent);
     }
 
     #[test]
     fn recognizes_the_easter_season() {
-        let date = CalendarDate::new(2026, 4, 5, 0);
+        let date = input_date("2026-04-05");
         let recommendation = recommendation_for(date);
         assert!(matches!(recommendation.mystery, MysterySet::Glorious));
+        assert_eq!(recommendation.basis, RecommendationBasis::EasterSeason);
+    }
+
+    #[test]
+    fn identifies_weekday_recommendations() {
+        let recommendation = recommendation_for(input_date("2026-01-07"));
+        assert!(matches!(recommendation.mystery, MysterySet::Glorious));
+        assert_eq!(recommendation.basis, RecommendationBasis::Weekday);
+    }
+
+    #[test]
+    fn identifies_advent_boundaries() {
+        assert_eq!(
+            recommendation_for(input_date("2026-11-28")).basis,
+            RecommendationBasis::Weekday
+        );
+        assert_eq!(
+            recommendation_for(input_date("2026-11-29")).basis,
+            RecommendationBasis::Advent
+        );
+        assert_eq!(
+            recommendation_for(input_date("2026-12-24")).basis,
+            RecommendationBasis::Advent
+        );
+    }
+
+    #[test]
+    fn identifies_christmas_period_boundaries() {
+        assert_eq!(
+            recommendation_for(input_date("2026-12-25")).basis,
+            RecommendationBasis::ChristmasPeriod
+        );
+        assert_eq!(
+            recommendation_for(input_date("2027-01-06")).basis,
+            RecommendationBasis::ChristmasPeriod
+        );
+        assert_eq!(
+            recommendation_for(input_date("2027-01-07")).basis,
+            RecommendationBasis::Weekday
+        );
+    }
+
+    #[test]
+    fn identifies_lent_boundaries() {
+        let easter = easter_sunday(2026);
+        assert_eq!(
+            recommendation_for(add_days(easter, -47)).basis,
+            RecommendationBasis::Weekday
+        );
+        assert_eq!(
+            recommendation_for(add_days(easter, -46)).basis,
+            RecommendationBasis::Lent
+        );
+        assert_eq!(
+            recommendation_for(add_days(easter, -1)).basis,
+            RecommendationBasis::Lent
+        );
+    }
+
+    #[test]
+    fn identifies_easter_season_and_feast_boundaries() {
+        let easter = easter_sunday(2026);
+        assert_eq!(
+            recommendation_for(easter).basis,
+            RecommendationBasis::EasterSeason
+        );
+        assert_eq!(
+            recommendation_for(add_days(easter, 48)).basis,
+            RecommendationBasis::EasterSeason
+        );
+        assert_eq!(
+            recommendation_for(add_days(easter, 49)).basis,
+            RecommendationBasis::FeastOverride
+        );
+    }
+
+    #[test]
+    fn feast_override_keeps_precedence_over_a_season() {
+        let recommendation = recommendation_for(input_date("2026-03-25"));
+        assert!(matches!(recommendation.mystery, MysterySet::Joyful));
+        assert_eq!(recommendation.basis, RecommendationBasis::FeastOverride);
+    }
+
+    #[test]
+    fn parses_and_formats_input_dates_without_utc_conversion() {
+        let date = input_date("2024-02-29");
+        assert_eq!(date.to_input_value(), "2024-02-29");
+        assert_eq!(date.weekday, 4);
+        assert_eq!(
+            CalendarDate::from_input_value(&date.to_input_value()),
+            Some(date)
+        );
+    }
+
+    #[test]
+    fn rejects_invalid_input_dates() {
+        for value in [
+            "",
+            "2026-2-01",
+            "2026-02-1",
+            "0000-01-01",
+            "2026-00-10",
+            "2026-13-10",
+            "2026-02-29",
+            "2024-04-31",
+            "not-a-date",
+            "2026-01-01-extra",
+        ] {
+            assert_eq!(CalendarDate::from_input_value(value), None, "{value}");
+        }
     }
 }

@@ -17,6 +17,7 @@
   --color-surface-fill: rgba(255, 255, 255, .035);
   --color-control-background: rgba(255, 255, 255, .055);
   --color-focus-outline: #e5cd91;
+  --color-error: #f2a6a6;
   --color-diagram-chain: #796844;
   --color-diagram-accent: #c7a865;
   --color-diagram-copy: #b7b0a2;
@@ -53,6 +54,7 @@
   --color-surface-fill: rgba(255, 253, 248, .68);
   --color-control-background: rgba(255, 253, 248, .82);
   --color-focus-outline: #6d2b68;
+  --color-error: #9a2727;
   --color-diagram-chain: #665024;
   --color-diagram-accent: #c9a84c;
   --color-diagram-copy: #554a3a;
@@ -87,7 +89,7 @@ body {
 
 .app-shell { min-height: 100vh; overflow: hidden; }
 
-button, select { font: inherit; }
+button, input, select { font: inherit; }
 
 .visually-hidden {
   position: absolute;
@@ -382,6 +384,74 @@ button, select { font: inherit; }
 .mystery-recommendation .recommendation-mystery {
   color: var(--color-text-primary);
   font-size: 17px;
+}
+
+.recommendation-picker {
+  max-width: 440px;
+  margin: 18px auto;
+  text-align: left;
+}
+
+.recommendation-picker > label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-text-primary);
+  font: 600 13px "DM Sans", sans-serif;
+}
+
+.recommendation-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recommendation-controls input,
+.recommendation-controls button {
+  min-height: 44px;
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-small);
+}
+
+.recommendation-controls input {
+  flex: 1 1 210px;
+  min-width: 0;
+  padding: 8px 12px;
+  background: var(--color-control-background);
+  color: var(--color-text-primary);
+}
+
+.recommendation-controls button {
+  padding: 8px 18px;
+  background: var(--color-accent-bright);
+  color: var(--color-on-bright-accent);
+  cursor: pointer;
+  font: 600 13px "DM Sans", sans-serif;
+}
+
+.recommendation-controls input:focus-visible,
+.recommendation-controls button:focus-visible {
+  outline: 3px solid var(--color-focus-outline);
+  outline-offset: 2px;
+}
+
+.mystery-recommendation .recommendation-help,
+.mystery-recommendation .recommendation-error {
+  margin-top: 7px;
+  font: 400 12px/1.45 "DM Sans", sans-serif;
+}
+
+.mystery-recommendation .recommendation-error {
+  color: var(--color-error);
+}
+
+.recommendation-result {
+  padding-top: 2px;
+}
+
+.mystery-recommendation .recommendation-reason {
+  max-width: 620px;
+  margin: 10px auto 0;
+  font-size: 14px;
 }
 
 .end-box, .note-box {

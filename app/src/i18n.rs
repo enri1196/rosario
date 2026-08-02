@@ -97,6 +97,16 @@ pub struct MysteryGroup {
     pub mysteries: &'static [Mystery; 5],
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub struct RecommendationBasisDescriptions {
+    pub weekday: &'static str,
+    pub advent: &'static str,
+    pub christmas_period: &'static str,
+    pub lent: &'static str,
+    pub easter_season: &'static str,
+    pub feast_override: &'static str,
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum MysterySet {
     Joyful,
@@ -133,6 +143,13 @@ pub struct Translation {
     pub prayers: &'static [Prayer; 5],
     pub mystery_recommendation_title: &'static str,
     pub mystery_recommendation_pray_label: &'static str,
+    pub mystery_recommendation_date_label: &'static str,
+    pub mystery_recommendation_date_help: &'static str,
+    pub mystery_recommendation_today_label: &'static str,
+    pub mystery_recommendation_selected_date_label: &'static str,
+    pub mystery_recommendation_reason_label: &'static str,
+    pub mystery_recommendation_invalid_date: &'static str,
+    pub mystery_recommendation_basis: RecommendationBasisDescriptions,
     pub creed_title: &'static str,
     pub creed: &'static str,
     pub guide_title: &'static str,
@@ -270,7 +287,9 @@ const EN_GROUPS: [MysteryGroup; 4] = [
 
 pub const IT: Translation = Translation {
     page_title: "Guida al Rosario", heading: "Guida al Rosario", language_label: "Lingua", theme_control_label: "Tema", dark_theme_label: "Passa al tema scuro", light_theme_label: "Passa al tema chiaro", skip_link: "Vai al contenuto", prayers_heading: "Preghiere del Rosario", prayers: &IT_PRAYERS,
-    mystery_recommendation_title: "Misteri da pregare oggi", mystery_recommendation_pray_label: "Misteri da pregare",
+    mystery_recommendation_title: "Misteri consigliati", mystery_recommendation_pray_label: "Misteri da pregare",
+    mystery_recommendation_date_label: "Scegli una data", mystery_recommendation_date_help: "Esplora i Misteri consigliati per un altro giorno.", mystery_recommendation_today_label: "Oggi", mystery_recommendation_selected_date_label: "Data selezionata", mystery_recommendation_reason_label: "Perché", mystery_recommendation_invalid_date: "Inserisci una data valida: la raccomandazione precedente non è stata modificata.",
+    mystery_recommendation_basis: RecommendationBasisDescriptions { weekday: "La raccomandazione segue il giorno della settimana.", advent: "Nel tempo di Avvento si contemplano i Misteri Gaudiosi.", christmas_period: "Nel tempo di Natale si contemplano i Misteri Gaudiosi.", lent: "Nel tempo di Quaresima si contemplano i Misteri Dolorosi.", easter_season: "Nel tempo di Pasqua si contemplano i Misteri Gloriosi.", feast_override: "La celebrazione liturgica di questo giorno determina i Misteri consigliati." },
     creed_title: "Credo degli Apostoli", creed: "Credo in Dio, Padre onnipotente, Creatore del cielo e della terra; e in Gesù Cristo, suo unico Figlio, nostro Signore, il quale fu concepito di Spirito Santo, nacque da Maria Vergine, patì sotto Ponzio Pilato, fu crocifisso, morì e fu sepolto; discese agli inferi; il terzo giorno risuscitò da morte; salì al cielo, siede alla destra di Dio Padre onnipotente; di là verrà a giudicare i vivi e i morti. Credo nello Spirito Santo, la santa Chiesa cattolica, la comunione dei santi, la remissione dei peccati, la risurrezione della carne, la vita eterna. Amen.",
     guide_title: "Come recitare il Rosario", our_father: "Padre Nostro", hail_mary: "Ave Maria",
     steps: &["Segno della Croce", "Credo degli Apostoli", "Padre Nostro", "Tre Ave Maria", "Gloria al Padre", "O Mio Gesù", "Intenzione", "Annunciare e meditare il Mistero", "Ripetere per cinque decine"],
@@ -280,7 +299,9 @@ pub const IT: Translation = Translation {
 
 pub const EN: Translation = Translation {
     page_title: "Guide to the Rosary", heading: "Guide to the Rosary", language_label: "Language", theme_control_label: "Theme", dark_theme_label: "Switch to dark theme", light_theme_label: "Switch to light theme", skip_link: "Skip to content", prayers_heading: "Prayers of the Rosary", prayers: &EN_PRAYERS,
-    mystery_recommendation_title: "Mysteries for today", mystery_recommendation_pray_label: "Mysteries to pray",
+    mystery_recommendation_title: "Recommended Mysteries", mystery_recommendation_pray_label: "Mysteries to pray",
+    mystery_recommendation_date_label: "Choose a date", mystery_recommendation_date_help: "Explore the Mysteries recommended for another day.", mystery_recommendation_today_label: "Today", mystery_recommendation_selected_date_label: "Selected date", mystery_recommendation_reason_label: "Why", mystery_recommendation_invalid_date: "Enter a valid date; the previous recommendation has not changed.",
+    mystery_recommendation_basis: RecommendationBasisDescriptions { weekday: "The recommendation follows the day of the week.", advent: "During Advent, the Joyful Mysteries are contemplated.", christmas_period: "During the Christmas season, the Joyful Mysteries are contemplated.", lent: "During Lent, the Sorrowful Mysteries are contemplated.", easter_season: "During the Easter season, the Glorious Mysteries are contemplated.", feast_override: "The liturgical celebration on this date determines the recommended Mysteries." },
     creed_title: "The Apostles' Creed", creed: "I believe in God, the Father almighty, Creator of heaven and earth, and in Jesus Christ, his only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried; he descended into hell; on the third day he rose again from the dead; he ascended into heaven, and is seated at the right hand of God the Father almighty; from there he will come to judge the living and the dead. I believe in the Holy Spirit, the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.",
     guide_title: "How to pray the Rosary", our_father: "Our Father", hail_mary: "Hail Mary",
     steps: &["Sign of the Cross", "Apostles' Creed", "Our Father", "Three Hail Marys", "Glory Be", "O My Jesus", "Prayer intention", "Announce and meditate on the Mystery", "Repeat for five decades"],
