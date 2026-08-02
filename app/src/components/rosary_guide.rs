@@ -10,12 +10,12 @@ pub fn RosaryGuide(
     copy: Memo<Translation>,
     language: RwSignal<Language>,
     guided_session: RwSignal<Option<RosarySession>>,
-    intention: RwSignal<Option<String>>,
+    intentions: RwSignal<Vec<String>>,
 ) -> impl IntoView {
     view! {
         <section class="guide" aria-labelledby="guide-heading">
             <h2 id="guide-heading" class="section-kicker">{move || copy.get().guide_title}</h2>
-            <PrayerIntention copy intention />
+            <PrayerIntention copy intentions />
             <button
                 type="button"
                 class="guided-start-button"
@@ -27,7 +27,7 @@ pub fn RosaryGuide(
                 {move || copy.get().guided_start_label}
             </button>
 
-            <GuidedPrayer copy language session=guided_session intention />
+            <GuidedPrayer copy language session=guided_session intentions />
 
             <GuideBox>
                 <article class="creed-box">

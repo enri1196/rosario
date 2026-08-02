@@ -4,28 +4,43 @@ const APP_URL = "http://127.0.0.1:3000/";
 const INTENTIONS_STORAGE_KEY = "rosary-intentions";
 
 function intentionEditor(page: Page): Locator {
-  return page.getByRole("region", { name: "Intenzione di preghiera" });
+  return page.getByRole("region", { name: "Intenzioni di preghiera" });
 }
 
 function guidedPrayer(page: Page): Locator {
   return page.getByRole("region", { name: "Rosario guidato" });
 }
 
-test("saves, reloads, edits, clears, and shares one private intention with guided prayer", async ({
+async function addIntention(editor: Locator, value: string): Promise<void> {
+  await editor.getByRole("button", { name: "Aggiungi intenzione" }).click();
+  const input = editor.getByLabel("Nuova intenzione");
+  await input.fill(value);
+  await input.press("Enter");
+}
+
+test("adds, reloads, and shares an ordered private tag list with guided prayer", async ({
   page,
 }) => {
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto(APP_URL);
 
   const editor = intentionEditor(page);
-  const textarea = editor.getByLabel("La tua intenzione");
-  const privateIntention = "Per la mia famiglia e per la pace";
+  const input = editor.getByLabel("Nuova intenzione");
+  const addButton = editor.getByRole("button", { name: "Aggiungi intenzione" });
+  const privateIntentions = ["Per la mia famiglia", "Per la pace"];
   const consoleMessages: string[] = [];
   const requestsAfterEntry: string[] = [];
   page.on("console", (message) => consoleMessages.push(message.text()));
 
-  await expect(textarea).toHaveValue("");
-  await expect(editor.locator(".intention-count")).toHaveText("Caratteri: 0/500");
+  await expect(input).toHaveCount(0);
+  await expect(editor.locator(".intention-empty-state")).toHaveText(
+    "Nessuna intenzione aggiunta.",
+  );
+  await expect(editor.locator(".intention-total-count")).toHaveText("Intenzioni: 0/50");
+  await expect(editor.locator(".intention-tags > li").last().getByRole("button")).toHaveAttribute(
+    "aria-label",
+    "Aggiungi intenzione",
+  );
   await expect
     .poll(() => page.evaluate((key) => localStorage.getItem(key), INTENTIONS_STORAGE_KEY))
     .toBeNull();
@@ -33,104 +48,162 @@ test("saves, reloads, edits, clears, and shares one private intention with guide
   page.on("request", (request) => {
     requestsAfterEntry.push(`${request.url()} ${request.postData() ?? ""}`);
   });
-  await textarea.fill(`  ${privateIntention}  `);
-  await editor.getByRole("button", { name: "Salva intenzione" }).click();
+  await addButton.click();
+  await expect(input).toBeFocused();
+  await expect(addButton).toBeDisabled();
+  await editor.getByRole("heading", { name: "Intenzioni di preghiera" }).click();
+  await expect(input).toHaveCount(0);
+  await expect(editor.locator(".intention-tag")).toHaveCount(0);
 
-  await expect(textarea).toHaveValue(privateIntention);
-  await expect(editor.locator(".intention-feedback")).toHaveText(
-    "Intenzione salvata in questo browser.",
-  );
-  await expect
-    .poll(() => page.evaluate((key) => localStorage.getItem(key), INTENTIONS_STORAGE_KEY))
-    .toBe(privateIntention);
-  expect(page.url()).toBe(APP_URL);
-  expect(requestsAfterEntry.some((request) => request.includes(privateIntention))).toBe(false);
-  expect(consoleMessages.some((message) => message.includes(privateIntention))).toBe(false);
+  await addButton.click();
+  await input.fill(`  ${privateIntentions[0]}  `);
+  await editor.getByRole("heading", { name: "Intenzioni di preghiera" }).click();
+  await addIntention(editor, privateIntentions[1]);
+
+  await expect(input).toHaveCount(0);
+  await expect(editor.locator(".intention-tag-text")).toHaveText(privateIntentions);
+  await expect(editor.locator(".intention-feedback")).toHaveText("Intenzione aggiunta.");
+  await expect(editor.locator(".intention-total-count")).toHaveText("Intenzioni: 2/50");
   await expect
     .poll(() =>
-      page.evaluate((value) => {
+      page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "[]"), INTENTIONS_STORAGE_KEY),
+    )
+    .toEqual(privateIntentions);
+  expect(page.url()).toBe(APP_URL);
+  expect(requestsAfterEntry.some((request) => privateIntentions.some((value) => request.includes(value)))).toBe(false);
+  expect(consoleMessages.some((message) => privateIntentions.some((value) => message.includes(value)))).toBe(false);
+  await expect
+    .poll(() =>
+      page.evaluate((values) => {
         return [...document.querySelectorAll("*")].some((element) =>
-          [...element.attributes].some((attribute) => attribute.value.includes(value)),
+          [...element.attributes].some((attribute) =>
+            values.some((value) => attribute.value.includes(value)),
+          ),
         );
-      }, privateIntention),
+      }, privateIntentions),
     )
     .toBe(false);
 
   await page.getByRole("button", { name: "Avvia il Rosario guidato" }).click();
   const guided = guidedPrayer(page);
-  await expect(guided.locator(".guided-intention-text")).toHaveText(privateIntention);
+  await expect(guided.locator(".guided-intention-tag")).toHaveText(privateIntentions);
   await guided.getByRole("button", { name: "Avanti" }).click();
-  await expect(guided.locator(".guided-intention")).toHaveCount(0);
+  await expect(guided.locator(".guided-intentions")).toHaveCount(0);
 
   for (let index = 0; index < 30; index += 1) {
     await guided.locator(".guided-primary-button").click();
   }
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Rosario completato");
-  await expect(guided.locator(".guided-intention-text")).toHaveText(privateIntention);
+  await expect(guided.locator(".guided-intention-tag")).toHaveText(privateIntentions);
 
   await page.reload();
   const reloadedEditor = intentionEditor(page);
-  await expect(reloadedEditor.getByLabel("La tua intenzione")).toHaveValue(privateIntention);
-  await reloadedEditor.getByLabel("La tua intenzione").fill("Per una persona cara");
-  await reloadedEditor.getByRole("button", { name: "Salva intenzione" }).click();
-  await expect
-    .poll(() => page.evaluate((key) => localStorage.getItem(key), INTENTIONS_STORAGE_KEY))
-    .toBe("Per una persona cara");
-
-  await reloadedEditor.getByRole("button", { name: "Cancella intenzione" }).click();
-  await expect(reloadedEditor.getByLabel("La tua intenzione")).toHaveValue("");
-  await expect(reloadedEditor.locator(".intention-feedback")).toHaveText(
-    "Intenzione cancellata.",
-  );
-  await expect
-    .poll(() => page.evaluate((key) => localStorage.getItem(key), INTENTIONS_STORAGE_KEY))
-    .toBeNull();
-
-  await page.getByRole("button", { name: "Avvia il Rosario guidato" }).click();
-  await expect(guidedPrayer(page).locator(".guided-intention")).toHaveCount(0);
+  await expect(reloadedEditor.getByLabel("Nuova intenzione")).toHaveCount(0);
+  await expect(reloadedEditor.locator(".intention-tag-text")).toHaveText(privateIntentions);
 });
 
-test("accepts 500 Unicode scalar values and rejects an over-limit edit", async ({ page }) => {
+test("enforces 50 Unicode characters, unique tags, and a maximum of 50 intentions", async ({
+  page,
+}) => {
   await page.goto(APP_URL);
 
   const editor = intentionEditor(page);
-  const textarea = editor.getByLabel("La tua intenzione");
-  const accepted = "🙏".repeat(500);
-  const overLimit = `${accepted}🙏`;
+  const input = editor.getByLabel("Nuova intenzione");
+  const addButton = editor.getByRole("button", { name: "Aggiungi intenzione" });
+  const accepted = "🙏".repeat(50);
 
-  await textarea.fill(accepted);
-  await expect(editor.locator(".intention-count")).toHaveText("Caratteri: 500/500");
-  await editor.getByRole("button", { name: "Salva intenzione" }).click();
+  await addButton.click();
+  await input.fill(accepted);
+  await expect(editor.locator(".intention-count").first()).toHaveText("Caratteri: 50/50");
+  await input.press("Enter");
+  await expect(editor.locator(".intention-feedback")).toHaveText("Intenzione aggiunta.");
+
+  await addButton.click();
+  await input.fill(accepted);
+  await input.press("Enter");
   await expect(editor.locator(".intention-feedback")).toHaveText(
-    "Intenzione salvata in questo browser.",
+    "Questa intenzione è già presente.",
   );
+
+  await input.fill(`${accepted}🙏`);
+  await expect(editor.locator(".intention-count").first()).toHaveText("Caratteri: 51/50");
+  await expect(input).toHaveAttribute("aria-invalid", "true");
+  await input.press("Enter");
+  await expect(editor.locator(".intention-feedback")).toHaveText(
+    "Ogni intenzione non può superare 50 caratteri.",
+  );
+  await input.press("Escape");
+
+  for (let index = 1; index < 50; index += 1) {
+    await addIntention(editor, `Intenzione ${index}`);
+  }
+  await expect(editor.locator(".intention-tag")).toHaveCount(50);
+  await expect(editor.locator(".intention-total-count")).toHaveText("Intenzioni: 50/50");
+  await expect(addButton).toBeDisabled();
   await expect
     .poll(() =>
-      page.evaluate((key) => {
-        const value = localStorage.getItem(key);
-        return value === null ? null : Array.from(value).length;
-      }, INTENTIONS_STORAGE_KEY),
+      page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "[]").length, INTENTIONS_STORAGE_KEY),
     )
-    .toBe(500);
-
-  await textarea.fill(overLimit);
-  await expect(editor.locator(".intention-count")).toHaveText("Caratteri: 501/500");
-  await expect(textarea).toHaveAttribute("aria-invalid", "true");
-  await editor.getByRole("button", { name: "Salva intenzione" }).click();
-  await expect(editor.locator(".intention-feedback")).toHaveText(
-    "L'intenzione non può superare 500 caratteri.",
-  );
-  await expect
-    .poll(() =>
-      page.evaluate((key) => {
-        const value = localStorage.getItem(key);
-        return value === null ? null : Array.from(value).length;
-      }, INTENTIONS_STORAGE_KEY),
-    )
-    .toBe(500);
+    .toBe(50);
 });
 
-test("keeps the editor usable in English, light theme, and storage-disabled browsers", async ({
+test("reorders tags with drag and keyboard, deletes with the right-side x, and persists order", async ({
+  page,
+}) => {
+  await page.goto(APP_URL);
+  const editor = intentionEditor(page);
+
+  for (const intention of ["Prima", "Seconda", "Terza"]) {
+    await addIntention(editor, intention);
+  }
+
+  let tags = editor.locator(".intention-tag");
+  await tags.nth(0).dragTo(tags.nth(2));
+  await expect(editor.locator(".intention-tag-text")).toHaveText(["Seconda", "Terza", "Prima"]);
+  await expect(editor.locator(".intention-feedback")).toHaveText(
+    "Ordine delle intenzioni aggiornato.",
+  );
+
+  await tags.filter({ hasText: "Prima" }).focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect(editor.locator(".intention-tag-text")).toHaveText(["Seconda", "Prima", "Terza"]);
+  await expect(tags.filter({ hasText: "Prima" })).toBeFocused();
+
+  const firstTag = tags.nth(0);
+  const firstTextBox = await firstTag.locator(".intention-tag-text").boundingBox();
+  const deleteBox = await firstTag.getByRole("button", { name: "Elimina intenzione 1" }).boundingBox();
+  expect(firstTextBox).not.toBeNull();
+  expect(deleteBox).not.toBeNull();
+  expect(deleteBox!.x).toBeGreaterThan(firstTextBox!.x);
+  await firstTag.getByRole("button", { name: "Elimina intenzione 1" }).click();
+  await expect(editor.locator(".intention-tag-text")).toHaveText(["Prima", "Terza"]);
+  await expect(editor.locator(".intention-feedback")).toHaveText("Intenzione eliminata.");
+  await expect
+    .poll(() =>
+      page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "[]"), INTENTIONS_STORAGE_KEY),
+    )
+    .toEqual(["Prima", "Terza"]);
+
+  await page.reload();
+  tags = intentionEditor(page).locator(".intention-tag");
+  await expect(tags.locator(".intention-tag-text")).toHaveText(["Prima", "Terza"]);
+});
+
+test("migrates the previous single-intention storage value into one tag", async ({ page }) => {
+  await page.goto(APP_URL);
+  await page.evaluate(
+    ([key, value]) => localStorage.setItem(key, value),
+    [INTENTIONS_STORAGE_KEY, "  Per una persona cara  "],
+  );
+
+  await page.reload();
+
+  await expect(intentionEditor(page).locator(".intention-tag-text")).toHaveText([
+    "Per una persona cara",
+  ]);
+});
+
+test("keeps tags usable in English, light theme, narrow screens, and disabled storage", async ({
   page,
 }) => {
   await page.addInitScript(() => {
@@ -152,29 +225,33 @@ test("keeps the editor usable in English, light theme, and storage-disabled brow
   await page.getByRole("button", { name: /Theme: Switch to light theme/ }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 
-  const editor = page.getByRole("region", { name: "Prayer intention" });
-  const textarea = editor.getByLabel("Your intention");
-  await textarea.fill("For peace");
-  await editor.getByRole("button", { name: "Save intention" }).click();
+  const editor = page.getByRole("region", { name: "Prayer intentions" });
+  await editor.getByRole("button", { name: "Add intention" }).click();
+  const input = editor.getByLabel("New intention");
+  await input.fill("For peace");
+  await expect(input).toHaveCSS("color", /rgb/);
+  await input.press("Enter");
   await expect(editor.locator(".intention-feedback")).toHaveText(
     "The change is active on this page, but the browser did not allow it to be saved.",
   );
+  await expect(editor.locator(".intention-tag-text")).toHaveText(["For peace"]);
 
   await page.getByRole("button", { name: "Start guided Rosary" }).click();
-  let guided = page.getByRole("region", { name: "Guided Rosary" });
-  await expect(guided.locator(".guided-intention-text")).toHaveText("For peace");
-  await expect(editor.locator("textarea")).toHaveCSS("color", /rgb/);
+  const guided = page.getByRole("region", { name: "Guided Rosary" });
+  await expect(guided.locator(".guided-intention-tag")).toHaveText(["For peace"]);
+  const tag = editor.locator(".intention-tag");
+  const deleteButton = tag.getByRole("button", { name: "Delete intention 1" });
+  const addBox = await editor.getByRole("button", { name: "Add intention" }).boundingBox();
+  const deleteBox = await deleteButton.boundingBox();
+  expect(addBox).not.toBeNull();
+  expect(deleteBox).not.toBeNull();
+  expect(addBox!.height).toBeGreaterThanOrEqual(48);
+  expect(deleteBox!.height).toBeGreaterThanOrEqual(36);
 
-  await editor.getByRole("button", { name: "Clear intention" }).click();
-  await expect(guided.locator(".guided-intention")).toHaveCount(0);
+  await deleteButton.click();
+  await expect(editor.locator(".intention-tag")).toHaveCount(0);
+  await expect(guided.locator(".guided-intentions")).toHaveCount(0);
   await expect(editor.locator(".intention-feedback")).toHaveText(
     "The change is active on this page, but the browser did not allow it to be saved.",
   );
-
-  const saveButton = await editor.getByRole("button", { name: "Save intention" }).boundingBox();
-  const clearButton = await editor.getByRole("button", { name: "Clear intention" }).boundingBox();
-  expect(saveButton).not.toBeNull();
-  expect(clearButton).not.toBeNull();
-  expect(saveButton!.height).toBeGreaterThanOrEqual(48);
-  expect(clearButton!.height).toBeGreaterThanOrEqual(48);
 });

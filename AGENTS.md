@@ -81,14 +81,27 @@ Remember that cross-file resolution is best-effort name matching and dynamic
 dispatch can be ambiguous. When a result is ambiguous, narrow the query by
 symbol name, file, or flow and state the uncertainty rather than guessing.
 
+## Keep these instructions current
+
+Treat `AGENTS.md` as part of every feature's durable documentation. Before
+handing off a change, review this file whenever the work adds, removes, or
+renames a module; moves responsibility between layers; establishes a storage
+or interaction contract; or changes the normal verification workflow. Update
+the project map and development guidance in the same change when they would
+otherwise become stale.
+
+Keep additions concise and reusable for future work. Record stable ownership,
+behavioral boundaries, and verification expectations rather than temporary
+implementation notes or one-off debugging details.
+
 ## Quick project map
 
 This is a small bilingual Rosary guide built with Leptos and Rust. Start with
 the application composition and follow the data outward:
 
-- `app/src/lib.rs` is the application entry point. `App` owns the reactive
-  language signal and derives the shared `Memo<Translation>` passed to the
-  page components.
+- `app/src/lib.rs` is the application entry point. `App` owns the shared
+  language, theme, guided-session, and ordered-intention signals and derives
+  the `Memo<Translation>` passed to page components.
 - `app/src/i18n.rs` contains `Language`, `Translation`, prayer text, mystery
   data, typed mystery-set identifiers, labels, and the Italian/English
   content. Add user-visible bilingual copy here rather than hard-coding it in
@@ -100,13 +113,25 @@ the application composition and follow the data outward:
 - `app/src/calendar.rs` contains the language-independent date arithmetic,
   weekday defaults, liturgical seasons, feast overrides, and pure calendar
   tests used by the recommendation.
+- `app/src/rosary_session.rs` contains the browser-independent guided Rosary
+  progression model. Keep step ordering and navigation rules here rather than
+  reconstructing them in components.
+- `app/src/intentions.rs` owns intention normalization, the 50-character and
+  50-tag limits, ordered JSON persistence under `rosary-intentions`, legacy
+  single-value migration, and storage-disabled fallbacks.
 - `app/src/components/header.rs` renders the title, language selector, skip
   link, and document-language update.
 - `app/src/components/guide_box.rs` provides the shared visual shell used by
   the guide's bordered panels while preserving semantic inner elements.
 - `app/src/components/prayer_sidebar.rs` renders the five reusable prayers.
-- `app/src/components/rosary_guide.rs` renders the creed, rosary diagram,
-  step legend, ending text, and decade note.
+- `app/src/components/rosary_guide.rs` composes the intention editor, guided
+  prayer, creed, rosary diagram, step legend, ending text, and decade note.
+- `app/src/components/prayer_intention.rs` renders private intentions as
+  ordered tags. The `+` control stays last in the tag row and creates a
+  focused inline draft; Enter or blur confirms non-empty text, while an empty
+  draft disappears. Persist only confirmed add, delete, and reorder changes.
+- `app/src/components/guided_prayer.rs` renders the active `RosarySession` and
+  shows the shared ordered intentions at the start and completion states.
 - `app/src/components/rosary_diagram.rs` owns the diagram SVG and its labels.
 - `app/src/components/mystery_recommendation.rs` formats the current date and
   localized mystery-set label, then renders the recommendation box. Keep
@@ -122,8 +147,9 @@ the application composition and follow the data outward:
 - `frontend` is the WebAssembly entry package; `server` serves the generated
   Leptos site and provides the Axum fallback to `index.html`.
 - `end2end` contains the Playwright browser checks for initial rendering,
-  language switching, theme resolution, persistence, accessibility, control
-  alignment, and critical surfaces in both themes.
+  language switching, theme resolution, guided prayer, private intention tag
+  editing and persistence, accessibility, control alignment, and critical
+  surfaces in both themes.
 
 ## Fast start for a new feature
 
@@ -147,7 +173,9 @@ For a new conversation, use this short sequence:
    `cargo fmt --all -- --check`, `cargo check --workspace`, and, when the
    toolchain is available, `cargo leptos build`. Run the Playwright suite for
    user-visible flows such as language switching.
-7. Summarize the changed files, behavior, and checks in the handoff so the
+7. Review `AGENTS.md` and update its durable project map or workflow guidance
+   when the feature changed either one.
+8. Summarize the changed files, behavior, and checks in the handoff so the
    next conversation can continue from evidence rather than rediscovery.
 
 When adding a visible feature, update both language translations, preserve

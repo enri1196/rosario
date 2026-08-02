@@ -291,8 +291,8 @@ button, input, select, textarea { font: inherit; }
 .guided-secondary-button,
 .guided-close-button,
 .mystery-pray-button,
-.intention-save-button,
-.intention-clear-button {
+.intention-add-button,
+.intention-delete-button {
   min-height: 44px;
   border: 1px solid var(--color-surface-border);
   border-radius: var(--radius-small);
@@ -303,7 +303,7 @@ button, input, select, textarea { font: inherit; }
 .guided-start-button,
 .guided-primary-button,
 .mystery-pray-button,
-.intention-save-button {
+.intention-add-button {
   background: var(--color-accent-bright);
   color: var(--color-on-bright-accent);
 }
@@ -315,7 +315,7 @@ button, input, select, textarea { font: inherit; }
 
 .guided-secondary-button,
 .guided-close-button,
-.intention-clear-button {
+.intention-delete-button {
   background: var(--color-control-background);
   color: var(--color-text-primary);
 }
@@ -325,14 +325,15 @@ button, input, select, textarea { font: inherit; }
 .guided-secondary-button:focus-visible,
 .guided-close-button:focus-visible,
 .mystery-pray-button:focus-visible,
-.intention-save-button:focus-visible,
-.intention-clear-button:focus-visible,
-.prayer-intention textarea:focus-visible {
+.intention-add-button:focus-visible,
+.intention-delete-button:focus-visible,
+.intention-tag:focus-visible {
   outline: 3px solid var(--color-focus-outline);
   outline-offset: 2px;
 }
 
-.guided-secondary-button:disabled {
+.guided-secondary-button:disabled,
+.intention-add-button:disabled {
   cursor: not-allowed;
   opacity: .48;
 }
@@ -349,30 +350,21 @@ button, input, select, textarea { font: inherit; }
   text-transform: uppercase;
 }
 
-.prayer-intention label {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--color-text-primary);
-  font: 600 13px "DM Sans", sans-serif;
-}
-
-.prayer-intention textarea {
-  display: block;
-  width: 100%;
-  min-height: 128px;
-  resize: vertical;
-  border: 1px solid var(--color-surface-border);
-  border-radius: var(--radius-small);
-  padding: 10px 12px;
-  background: var(--color-control-background);
-  color: var(--color-text-primary);
-  line-height: 1.5;
+.intention-add-button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  padding: 0;
+  font-size: 24px;
+  line-height: 1;
 }
 
 .intention-meta {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 12px;
+  gap: 4px 12px;
   margin-top: 7px;
 }
 
@@ -388,15 +380,97 @@ button, input, select, textarea { font: inherit; }
   flex: 0 0 auto;
 }
 
-.intention-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  margin-top: 14px;
+.intention-total-count {
+  margin-inline-start: auto;
 }
 
-.intention-actions button {
-  padding: 9px 16px;
+.intention-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.intention-tag,
+.intention-draft-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-height: 38px;
+  border: 1px solid var(--color-surface-border);
+  border-radius: 999px;
+  padding: 3px 4px 3px 10px;
+  background: var(--color-control-background);
+  color: var(--color-text-primary);
+  cursor: grab;
+  font: 500 13px/1.35 "DM Sans", sans-serif;
+  touch-action: manipulation;
+}
+
+.intention-tag:active {
+  cursor: grabbing;
+}
+
+.intention-draft-tag {
+  padding-inline: 12px;
+  cursor: text;
+}
+
+.intention-draft-tag:focus-within {
+  outline: 3px solid var(--color-focus-outline);
+  outline-offset: 2px;
+}
+
+.intention-tag-input {
+  width: clamp(96px, 28vw, 220px);
+  min-width: 0;
+  min-height: 30px;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+.intention-add-slot {
+  display: flex;
+}
+
+.intention-drag-handle {
+  flex: 0 0 auto;
+  color: var(--color-accent);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.intention-tag-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.intention-delete-button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  min-height: 32px;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.intention-empty-state {
+  margin: 14px 0 0;
+  color: var(--color-text-dim);
+  font-size: 14px;
+  font-style: italic;
 }
 
 .intention-feedback {
@@ -464,7 +538,7 @@ button, input, select, textarea { font: inherit; }
   font-weight: 600;
 }
 
-.guided-intention {
+.guided-intentions {
   margin-top: 16px;
   border-inline-start: 3px solid var(--color-accent);
   border-radius: 0 var(--radius-small) var(--radius-small) 0;
@@ -472,8 +546,7 @@ button, input, select, textarea { font: inherit; }
   background: var(--color-control-background);
 }
 
-.guided-intention-label,
-.guided-intention-text {
+.guided-intention-label {
   margin: 0;
 }
 
@@ -484,10 +557,22 @@ button, input, select, textarea { font: inherit; }
   text-transform: uppercase;
 }
 
-.guided-intention-text {
-  margin-top: 3px;
+.guided-intention-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guided-intention-tag {
+  border: 1px solid var(--color-surface-border);
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: var(--color-surface-fill);
   color: var(--color-text-primary);
-  white-space: pre-wrap;
+  font: 500 12px/1.4 "DM Sans", sans-serif;
   overflow-wrap: anywhere;
 }
 
@@ -850,10 +935,12 @@ button, input, select, textarea { font: inherit; }
   .guided-close-button { width: 100%; }
   .guided-navigation { display: grid; grid-template-columns: 1fr; }
   .guided-navigation button,
-  .guided-completion button { min-height: 48px; width: 100%; }
-  .intention-meta { flex-direction: column; gap: 4px; }
-  .intention-actions { display: grid; grid-template-columns: 1fr; }
-  .intention-actions button { min-height: 48px; width: 100%; }
+  .guided-completion button { min-height: 49px; width: 100%; }
+  .intention-meta { display: grid; grid-template-columns: 1fr auto; }
+  .intention-help { grid-column: 1 / -1; }
+  .intention-total-count { margin-inline-start: 0; }
+  .intention-add-button { flex-basis: 48px; width: 48px; min-height: 48px; }
+  .intention-delete-button { min-height: 36px; width: 36px; flex-basis: 36px; }
   .mysteries-grid { grid-template-columns: 1fr; }
   .mysteries-section { padding-inline: 12px; }
 }
