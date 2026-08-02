@@ -126,10 +126,13 @@ the application composition and follow the data outward:
 - `app/src/components/prayer_sidebar.rs` renders the five reusable prayers.
 - `app/src/components/rosary_guide.rs` composes the intention editor, guided
   prayer, creed, rosary diagram, step legend, ending text, and decade note.
-- `app/src/components/prayer_intention.rs` renders private intentions as
-  ordered tags. The `+` control stays last in the tag row and creates a
-  focused inline draft; Enter or blur confirms non-empty text, while an empty
-  draft disappears. Persist only confirmed add, delete, and reorder changes.
+- `app/src/components/prayer_intention/mod.rs` owns the intention editor
+  signals, focus effects, and top-level composition. Its sibling modules
+  separate metadata and feedback (`meta.rs`), tag/draft/add rendering
+  (`tag_list.rs`), and mutation, persistence, focus, and labeling helpers
+  (`state.rs`). The `+` control stays last in the tag row and creates a focused
+  inline draft; Enter or blur confirms non-empty text, while an empty draft
+  disappears. Persist only confirmed add, delete, and reorder changes.
 - `app/src/components/guided_prayer.rs` renders the active `RosarySession` and
   shows the shared ordered intentions at the start and completion states.
 - `app/src/components/rosary_diagram.rs` owns the diagram SVG and its labels.
