@@ -19,12 +19,15 @@ async function recommendationText(page: Page): Promise<string> {
 test("starts on the browser-local current date and resets after exploring", async ({ page }) => {
   await page.goto(appUrl);
 
-  const dateInput = page.getByLabel("Scegli una data");
+  const dateInput = page.getByLabel("Scegli una data (YYYY-MM-DD)");
   const today = await browserLocalDateInputValue(page);
+  await expect(dateInput).toHaveAttribute("type", "text");
+  await expect(dateInput).toHaveAttribute("placeholder", "YYYY-MM-DD");
   await expect(dateInput).toHaveValue(today);
-  await expect(page.locator(".recommendation-date")).toContainText("Data selezionata");
+  await expect(page.locator(".recommendation-date")).toContainText(`Data selezionata ${today}`);
 
   await dateInput.fill("2026-08-03");
+  await expect(page.locator(".recommendation-date")).toContainText("2026-08-03");
   await expect(page.locator(".recommendation-mystery")).toContainText("Misteri Gaudiosi");
   await expect(page.locator(".recommendation-reason")).toContainText("giorno della settimana");
 
@@ -35,8 +38,9 @@ test("starts on the browser-local current date and resets after exploring", asyn
 test("explains seasonal and feast recommendations", async ({ page }) => {
   await page.goto(appUrl);
 
-  const dateInput = page.getByLabel("Scegli una data");
+  const dateInput = page.getByLabel("Scegli una data (YYYY-MM-DD)");
   await dateInput.fill("2026-12-01");
+  await expect(page.locator(".recommendation-date")).toContainText("2026-12-01");
   await expect(page.locator(".recommendation-mystery")).toContainText("Misteri Gaudiosi");
   await expect(page.locator(".recommendation-reason")).toContainText("Avvento");
 
@@ -48,16 +52,14 @@ test("explains seasonal and feast recommendations", async ({ page }) => {
 test("rejects invalid input without replacing the last valid recommendation", async ({ page }) => {
   await page.goto(appUrl);
 
-  const dateInput = page.getByLabel("Scegli una data");
+  const dateInput = page.getByLabel("Scegli una data (YYYY-MM-DD)");
   await dateInput.fill("2026-08-03");
   const previousRecommendation = await recommendationText(page);
 
-  await dateInput.evaluate((input: HTMLInputElement) => {
-    input.value = "2026-02-30";
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-  });
+  await dateInput.fill("2026-02-30");
 
   await expect(dateInput).toHaveAttribute("aria-invalid", "true");
+  await expect(dateInput).toHaveValue("2026-02-30");
   await expect(page.getByRole("alert")).toContainText("Inserisci una data valida");
   await expect.poll(() => recommendationText(page)).toBe(previousRecommendation);
 });
@@ -66,8 +68,8 @@ test("date exploration is fully localized in English", async ({ page }) => {
   await page.goto(appUrl);
   await page.getByLabel("Lingua").selectOption("en");
 
-  const dateInput = page.getByLabel("Choose a date");
-  await expect(page.getByText("Explore the Mysteries recommended for another day.")).toBeVisible();
+  const dateInput = page.getByLabel("Choose a date (YYYY-MM-DD)");
+  await expect(page.getByText("Use YYYY-MM-DD to explore the Mysteries recommended for another day.")).toBeVisible();
 
   await dateInput.fill("2026-04-05");
   await expect(page.locator(".recommendation-mystery")).toContainText("Glorious Mysteries");

@@ -8,7 +8,9 @@ pub fn MysteryRecommendation(
     copy: Memo<Translation>,
     language: RwSignal<Language>,
 ) -> impl IntoView {
-    let selected_date = RwSignal::new(CalendarDate::today());
+    let initial_date = CalendarDate::today();
+    let selected_date = RwSignal::new(initial_date);
+    let date_input_value = RwSignal::new(initial_date.to_input_value());
     let invalid_date = RwSignal::new(false);
 
     let recommendation = move || {
@@ -16,7 +18,7 @@ pub fn MysteryRecommendation(
         let current_language = language.get();
         let current_copy = copy.get();
         DisplayRecommendation {
-            date: format_date(recommendation.date, current_language),
+            date: recommendation.date.to_input_value(),
             mystery: recommendation.mystery.label(current_language).to_owned(),
             reason: basis_description(
                 recommendation.basis,
@@ -38,8 +40,14 @@ pub fn MysteryRecommendation(
                     <div class="recommendation-controls">
                         <input
                             id="mystery-recommendation-date"
-                            type="date"
-                            prop:value=move || selected_date.get().to_input_value()
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            spellcheck="false"
+                            maxlength="10"
+                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                            placeholder="YYYY-MM-DD"
+                            prop:value=move || date_input_value.get()
                             aria-describedby=move || if invalid_date.get() {
                                 "mystery-recommendation-date-help mystery-recommendation-date-error"
                             } else {
@@ -47,7 +55,9 @@ pub fn MysteryRecommendation(
                             }
                             aria-invalid=move || invalid_date.get().to_string()
                             on:input=move |event| {
-                                if let Some(date) = CalendarDate::from_input_value(&event_target_value(&event)) {
+                                let value = event_target_value(&event);
+                                date_input_value.set(value.clone());
+                                if let Some(date) = CalendarDate::from_input_value(&value) {
                                     selected_date.set(date);
                                     invalid_date.set(false);
                                 } else {
@@ -58,7 +68,9 @@ pub fn MysteryRecommendation(
                         <button
                             type="button"
                             on:click=move |_| {
-                                selected_date.set(CalendarDate::today());
+                                let today = CalendarDate::today();
+                                selected_date.set(today);
+                                date_input_value.set(today.to_input_value());
                                 invalid_date.set(false);
                             }
                         >
@@ -83,18 +95,21 @@ pub fn MysteryRecommendation(
                         <span class="recommendation-label">
                             {move || copy.get().mystery_recommendation_selected_date_label}
                         </span>
+                        {" "}
                         {move || recommendation().date}
                     </p>
                     <p class="recommendation-mystery">
                         <span class="recommendation-label">
                             {move || copy.get().mystery_recommendation_pray_label}
                         </span>
+                        {" "}
                         {move || recommendation().mystery}
                     </p>
                     <p class="recommendation-reason">
                         <span class="recommendation-label">
                             {move || copy.get().mystery_recommendation_reason_label}
                         </span>
+                        {" "}
                         {move || recommendation().reason}
                     </p>
                 </div>
@@ -120,74 +135,5 @@ fn basis_description(
         RecommendationBasis::Lent => descriptions.lent,
         RecommendationBasis::EasterSeason => descriptions.easter_season,
         RecommendationBasis::FeastOverride => descriptions.feast_override,
-    }
-}
-
-fn format_date(date: CalendarDate, language: Language) -> String {
-    match language {
-        Language::Italian => format!(
-            "{} {} {} {}",
-            weekday_name(date.weekday, language),
-            date.day,
-            month_name(date.month, language),
-            date.year
-        ),
-        Language::English => format!(
-            "{}, {} {} {}",
-            weekday_name(date.weekday, language),
-            month_name(date.month, language),
-            date.day,
-            date.year
-        ),
-    }
-}
-
-fn weekday_name(weekday: u32, language: Language) -> &'static str {
-    match (language, weekday) {
-        (Language::Italian, 0) => "domenica",
-        (Language::Italian, 1) => "lunedì",
-        (Language::Italian, 2) => "martedì",
-        (Language::Italian, 3) => "mercoledì",
-        (Language::Italian, 4) => "giovedì",
-        (Language::Italian, 5) => "venerdì",
-        (Language::Italian, 6) => "sabato",
-        (Language::English, 0) => "Sunday",
-        (Language::English, 1) => "Monday",
-        (Language::English, 2) => "Tuesday",
-        (Language::English, 3) => "Wednesday",
-        (Language::English, 4) => "Thursday",
-        (Language::English, 5) => "Friday",
-        (Language::English, 6) => "Saturday",
-        _ => "",
-    }
-}
-
-fn month_name(month: u32, language: Language) -> &'static str {
-    match (language, month) {
-        (Language::Italian, 1) => "gennaio",
-        (Language::Italian, 2) => "febbraio",
-        (Language::Italian, 3) => "marzo",
-        (Language::Italian, 4) => "aprile",
-        (Language::Italian, 5) => "maggio",
-        (Language::Italian, 6) => "giugno",
-        (Language::Italian, 7) => "luglio",
-        (Language::Italian, 8) => "agosto",
-        (Language::Italian, 9) => "settembre",
-        (Language::Italian, 10) => "ottobre",
-        (Language::Italian, 11) => "novembre",
-        (Language::Italian, 12) => "dicembre",
-        (Language::English, 1) => "January",
-        (Language::English, 2) => "February",
-        (Language::English, 3) => "March",
-        (Language::English, 4) => "April",
-        (Language::English, 5) => "May",
-        (Language::English, 6) => "June",
-        (Language::English, 7) => "July",
-        (Language::English, 8) => "August",
-        (Language::English, 9) => "September",
-        (Language::English, 10) => "October",
-        (Language::English, 11) => "November",
-        (Language::English, 12) => "December",
-        _ => "",
     }
 }
