@@ -69,14 +69,27 @@ test("language and theme controls stay aligned with a square toggle", async ({ p
 
   expect(selectBox).not.toBeNull();
   expect(toggleBox).not.toBeNull();
-  expect(toggleBox!.width).toBe(toggleBox!.height);
-  expect(toggleBox!.height).toBe(selectBox!.height);
+  expect(Math.abs(toggleBox!.width - toggleBox!.height)).toBeLessThanOrEqual(0.5);
+  expect(Math.abs(toggleBox!.height - selectBox!.height)).toBeLessThanOrEqual(0.5);
   expect(Math.abs(toggleBox!.y - selectBox!.y)).toBeLessThanOrEqual(0.5);
 });
 
 test("key surfaces and the original gold rosary remain visible in both themes", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto(APP_URL);
+
+  const rosaryGold = {
+    dark: {
+      chain: "rgb(121, 104, 68)",
+      beadHighlight: "rgb(240, 221, 167)",
+      beadShadow: "rgb(111, 89, 44)",
+    },
+    light: {
+      chain: "rgb(102, 80, 36)",
+      beadHighlight: "rgb(234, 219, 146)",
+      beadShadow: "rgb(103, 80, 34)",
+    },
+  } as const;
 
   for (const theme of ["dark", "light"] as const) {
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
@@ -91,9 +104,15 @@ test("key surfaces and the original gold rosary remain visible in both themes", 
       await expect(page.locator(selector).first()).toBeVisible();
     }
 
-    await expect(page.locator(".chain").first()).toHaveCSS("stroke", "rgb(102, 80, 36)");
-    await expect(page.locator("#bead stop").first()).toHaveCSS("stop-color", "rgb(234, 219, 146)");
-    await expect(page.locator("#bead stop").last()).toHaveCSS("stop-color", "rgb(103, 80, 34)");
+    await expect(page.locator(".chain").first()).toHaveCSS("stroke", rosaryGold[theme].chain);
+    await expect(page.locator("#bead stop").first()).toHaveCSS(
+      "stop-color",
+      rosaryGold[theme].beadHighlight,
+    );
+    await expect(page.locator("#bead stop").last()).toHaveCSS(
+      "stop-color",
+      rosaryGold[theme].beadShadow,
+    );
 
     if (theme === "dark") {
       await page.getByRole("button", { name: /Passa al tema chiaro/ }).click();

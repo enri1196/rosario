@@ -14,7 +14,7 @@ use theme::{apply_theme, persist_theme, Theme};
 pub fn App() -> impl IntoView {
     provide_meta_context();
 
-    let language = RwSignal::new(Language::Italian);
+    let language = RwSignal::new(Language::from_browser());
     let copy = Memo::new(move |_| Translation::for_language(language.get()));
     let theme = RwSignal::new(Theme::from_browser());
     let is_initial_theme = Cell::new(true);

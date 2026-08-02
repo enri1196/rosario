@@ -1,3 +1,6 @@
+/// The storage key used for an explicitly selected language.
+pub(crate) const LANGUAGE_STORAGE_KEY: &str = "rosary-language";
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Language {
     Italian,
@@ -21,12 +24,57 @@ impl Language {
         }
     }
 
-    pub fn from_code(code: &str) -> Self {
-        match code {
-            "en" => Self::English,
-            _ => Self::Italian,
+    /// Resolves a saved language preference into a supported language.
+    ///
+    /// Missing and invalid values preserve the application's Italian default.
+    pub(crate) fn resolve(saved_language: Option<&str>) -> Self {
+        match saved_language {
+            Some("en") => Self::English,
+            Some("it") | None | Some(_) => Self::Italian,
         }
     }
+
+    /// Resolves the initial language from browser storage when it is available.
+    ///
+    /// Storage failures are deliberately non-fatal so language initialization
+    /// can never prevent the application from rendering.
+    #[cfg(target_arch = "wasm32")]
+    pub(crate) fn from_browser() -> Self {
+        let saved_language = web_sys::window()
+            .and_then(|window| window.local_storage().ok().flatten())
+            .and_then(|storage| storage.get_item(LANGUAGE_STORAGE_KEY).ok().flatten());
+
+        Self::resolve(saved_language.as_deref())
+    }
+
+    /// Returns the Italian fallback outside a browser build.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub(crate) fn from_browser() -> Self {
+        Self::resolve(None)
+    }
+
+    pub fn from_code(code: &str) -> Self {
+        Self::resolve(Some(code))
+    }
+}
+
+/// Persists an explicit user choice when browser storage is available.
+///
+/// Browsers may block storage, especially in private browsing contexts, so
+/// persistence errors are intentionally ignored.
+#[cfg(target_arch = "wasm32")]
+pub(crate) fn persist_language(language: Language) {
+    if let Some(storage) =
+        web_sys::window().and_then(|window| window.local_storage().ok().flatten())
+    {
+        let _ = storage.set_item(LANGUAGE_STORAGE_KEY, language.code());
+    }
+}
+
+/// Does nothing when persistence is requested outside a browser build.
+#[cfg(not(target_arch = "wasm32"))]
+pub(crate) fn persist_language(_language: Language) {
+    let _ = LANGUAGE_STORAGE_KEY;
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -239,3 +287,28 @@ pub const EN: Translation = Translation {
     ending_title: "To conclude", ending: "Hail, Holy Queen · Personal prayer · Sign of the Cross", decade_note: "For each decade: announce the Mystery and meditate on it while praying one Our Father, ten Hail Marys, the Glory Be and O My Jesus.",
     mysteries_heading: "The twenty Mysteries", groups: &EN_GROUPS, fruit_label: "Fruit of the Mystery", version: "English version",
 };
+
+#[cfg(test)]
+mod tests {
+    use super::Language;
+
+    #[test]
+    fn resolves_saved_italian() {
+        assert!(matches!(Language::resolve(Some("it")), Language::Italian));
+    }
+
+    #[test]
+    fn resolves_saved_english() {
+        assert!(matches!(Language::resolve(Some("en")), Language::English));
+    }
+
+    #[test]
+    fn missing_preference_defaults_to_italian() {
+        assert!(matches!(Language::resolve(None), Language::Italian));
+    }
+
+    #[test]
+    fn invalid_preference_defaults_to_italian() {
+        assert!(matches!(Language::resolve(Some("fr")), Language::Italian));
+    }
+}

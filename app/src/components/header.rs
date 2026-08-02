@@ -1,4 +1,4 @@
-use crate::i18n::{Language, Translation};
+use crate::i18n::{persist_language, Language, Translation};
 use crate::theme::Theme;
 use leptos::prelude::*;
 
@@ -32,7 +32,11 @@ pub fn Header(
                     <label class="language-picker">
                         <select
                             aria-label=move || copy.get().language_label
-                            on:change=move |event| language.set(Language::from_code(&event_target_value(&event)))
+                            on:change=move |event| {
+                                let selected_language = Language::from_code(&event_target_value(&event));
+                                language.set(selected_language);
+                                persist_language(selected_language);
+                            }
                         >
                             {Language::ALL.into_iter().map(|item| view! {
                                 <option value=item.code() selected=move || language.get() == item>{item.label()}</option>
