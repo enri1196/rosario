@@ -1,4 +1,4 @@
-use super::GuideBox;
+use super::{AppButton, ButtonVariant, GuideBox};
 use crate::i18n::{Language, Mystery, MysterySet, Translation};
 use crate::rosary_session::{
     Decade, DecadePrayer, GuidedStep, OpeningStep, RosarySession, GUIDED_STEP_COUNT,
@@ -29,14 +29,13 @@ pub fn GuidedPrayer(
                 <section class="guided-prayer" aria-labelledby="guided-prayer-title">
                     <header class="guided-prayer-header">
                         <h3 id="guided-prayer-title">{move || copy.get().guided_title}</h3>
-                        <button
-                            type="button"
-                            class="guided-close-button"
-                            aria-label=move || copy.get().guided_close_label
-                            on:click=move |_| session.set(None)
+                        <AppButton
+                            variant=ButtonVariant::Close
+                            aria_label=move || copy.get().guided_close_label
+                            on_click=move |_| session.set(None)
                         >
                             <span aria-hidden="true">"×"</span>
-                        </button>
+                        </AppButton>
                     </header>
 
                     <div class="guided-session-meta">
@@ -127,31 +126,39 @@ pub fn GuidedPrayer(
                             </div>
 
                             <nav class="guided-navigation" aria-label=move || copy.get().guided_title>
-                                <button
-                                    type="button"
+                                <AppButton
+                                    variant=ButtonVariant::Secondary
                                     class="guided-secondary-button"
-                                    disabled=move || session.get().is_none_or(|current| current.is_first_step())
-                                    on:click=move |_| {
+                                    aria_label=move || copy.get().guided_previous_label
+                                    disabled=Signal::derive(move || session.get().is_none_or(|current| current.is_first_step()))
+                                    on_click=move |_| {
                                         update_session(session, RosarySession::previous);
                                         focus_step_heading(step_heading);
                                     }
                                 >
                                     {move || copy.get().guided_previous_label}
-                                </button>
-                                <button
-                                    type="button"
+                                </AppButton>
+                                <AppButton
+                                    variant=ButtonVariant::Secondary
                                     class="guided-secondary-button"
-                                    on:click=move |_| {
+                                    aria_label=move || copy.get().guided_reset_label
+                                    on_click=move |_| {
                                         update_session(session, RosarySession::reset);
                                         focus_step_heading(step_heading);
                                     }
                                 >
                                     {move || copy.get().guided_reset_label}
-                                </button>
-                                <button
-                                    type="button"
+                                </AppButton>
+                                <AppButton
                                     class="guided-primary-button"
-                                    on:click=move |_| {
+                                    aria_label=move || session.get().map(|current| {
+                                        if current.is_last_step() {
+                                            copy.get().guided_finish_label
+                                        } else {
+                                            copy.get().guided_next_label
+                                        }
+                                    }).unwrap_or("")
+                                    on_click=move |_| {
                                         update_session(session, RosarySession::next);
                                         focus_step_heading(step_heading);
                                     }
@@ -163,22 +170,22 @@ pub fn GuidedPrayer(
                                             copy.get().guided_next_label
                                         }
                                     }).unwrap_or("")}
-                                </button>
+                                </AppButton>
                             </nav>
                         }
                     >
                         <div class="guided-completion">
                             <p>{move || copy.get().guided_completion_message}</p>
-                            <button
-                                type="button"
+                            <AppButton
                                 class="guided-primary-button"
-                                on:click=move |_| {
+                                aria_label=move || copy.get().guided_restart_label
+                                on_click=move |_| {
                                     update_session(session, RosarySession::reset);
                                     focus_step_heading(step_heading);
                                 }
                             >
                                 {move || copy.get().guided_restart_label}
-                            </button>
+                            </AppButton>
                         </div>
                     </Show>
                 </section>

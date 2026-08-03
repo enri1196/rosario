@@ -121,6 +121,10 @@ the application composition and follow the data outward:
   single-value migration, and storage-disabled fallbacks.
 - `app/src/components/header.rs` renders the title, language selector, skip
   link, and document-language update.
+- `app/src/components/button.rs` owns the shared `AppButton` interaction and
+  focus contract. Use its explicit variants for every new button; provide an
+  accessible label for icon-only controls and reserve extra CSS classes for
+  layout, not a replacement visual treatment.
 - `app/src/components/guide_box.rs` provides the shared visual shell used by
   the guide's bordered panels while preserving semantic inner elements.
 - `app/src/components/prayer_sidebar.rs` renders the five reusable prayers.

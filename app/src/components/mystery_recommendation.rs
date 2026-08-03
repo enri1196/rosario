@@ -1,4 +1,4 @@
-use super::GuideBox;
+use super::{AppButton, GuideBox};
 use crate::calendar::{recommendation_for, CalendarDate, RecommendationBasis};
 use crate::i18n::{Language, RecommendationBasisDescriptions, Translation};
 use leptos::prelude::*;
@@ -65,9 +65,9 @@ pub fn MysteryRecommendation(
                                 }
                             }
                         />
-                        <button
-                            type="button"
-                            on:click=move |_| {
+                        <AppButton
+                            aria_label=move || copy.get().mystery_recommendation_today_label
+                            on_click=move |_| {
                                 let today = CalendarDate::today();
                                 selected_date.set(today);
                                 date_input_value.set(today.to_input_value());
@@ -75,7 +75,7 @@ pub fn MysteryRecommendation(
                             }
                         >
                             {move || copy.get().mystery_recommendation_today_label}
-                        </button>
+                        </AppButton>
                     </div>
                     <p id="mystery-recommendation-date-help" class="recommendation-help">
                         {move || copy.get().mystery_recommendation_date_help}

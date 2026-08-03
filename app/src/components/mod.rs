@@ -1,3 +1,4 @@
+mod button;
 mod footer;
 mod guide_box;
 mod guided_prayer;
@@ -10,6 +11,7 @@ mod prayer_sidebar;
 mod rosary_diagram;
 mod rosary_guide;
 
+pub use button::{AppButton, ButtonVariant};
 pub use footer::Footer;
 pub use guide_box::GuideBox;
 pub use guided_prayer::GuidedPrayer;

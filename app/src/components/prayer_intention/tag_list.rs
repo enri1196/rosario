@@ -2,6 +2,7 @@ use super::state::{
     confirm_draft, intention_delete_label, intention_position_label, persist_update,
     reorder_by_offset, reorder_to_value, IntentionFeedback,
 };
+use crate::components::{AppButton, ButtonVariant};
 use crate::i18n::Translation;
 use crate::intentions::{remove_intention, INTENTIONS_MAX_COUNT, INTENTION_MAX_CHARS};
 use leptos::{html, prelude::*};
@@ -99,16 +100,16 @@ fn SavedIntentionTag(
         >
             <span class="intention-drag-handle" aria-hidden="true">"⠿"</span>
             <span class="intention-tag-text">{intention}</span>
-            <button
-                type="button"
+            <AppButton
+                variant=ButtonVariant::IconSecondary
                 class="intention-delete-button"
-                aria-label=move || intention_delete_label(
+                aria_label=move || intention_delete_label(
                     copy.get(),
                     &delete_label_value,
                     &intentions.get(),
                 )
                 on:keydown=move |event| event.stop_propagation()
-                on:click=move |_| {
+                on_click=move |_| {
                     let updated = remove_intention(
                         &intentions.get_untracked(),
                         &delete_value,
@@ -122,7 +123,7 @@ fn SavedIntentionTag(
                 }
             >
                 <span aria-hidden="true">"×"</span>
-            </button>
+            </AppButton>
         </li>
     }
 }
@@ -185,27 +186,28 @@ fn AddIntentionControl(
                     draft.get().is_none() && intentions.get().len() < INTENTIONS_MAX_COUNT
                 }
                 fallback=move || view! {
-                    <button
-                        type="button"
+                    <AppButton
+                        variant=ButtonVariant::IconPrimary
                         class="intention-add-button"
-                        aria-label=move || copy.get().intention_add_label
-                        disabled=true
+                        aria_label=move || copy.get().intention_add_label
+                        disabled=Signal::derive(|| true)
+                        on_click=move |_| {}
                     >
                         <span aria-hidden="true">"+"</span>
-                    </button>
+                    </AppButton>
                 }
             >
-                <button
-                    type="button"
-                    class="intention-add-button"
-                    aria-label=move || copy.get().intention_add_label
-                    on:click=move |_| {
+            <AppButton
+                variant=ButtonVariant::IconPrimary
+                class="intention-add-button"
+                aria_label=move || copy.get().intention_add_label
+                on_click=move |_| {
                         feedback.set(None);
                         draft.set(Some(String::new()));
                     }
                 >
                     <span aria-hidden="true">"+"</span>
-                </button>
+            </AppButton>
             </Show>
         </li>
     }

@@ -1,3 +1,4 @@
+use super::{AppButton, ButtonVariant};
 use crate::i18n::{persist_language, Language, Translation};
 use crate::theme::Theme;
 use leptos::prelude::*;
@@ -45,24 +46,24 @@ pub fn Header(
                     </label>
                     // This changes only effective state; `theme.rs` owns browser
                     // persistence and `App` owns document synchronization.
-                    <button
+                    <AppButton
+                        variant=ButtonVariant::IconAccent
                         class="theme-toggle"
-                        type="button"
-                        aria-label=move || format!("{}: {}", copy.get().theme_control_label, match theme.get() {
+                        aria_label=move || format!("{}: {}", copy.get().theme_control_label, match theme.get() {
                             Theme::Dark => copy.get().light_theme_label,
                             Theme::Light => copy.get().dark_theme_label,
                         })
-                        aria-pressed=move || (theme.get() == Theme::Light).to_string()
-                        title=move || match theme.get() {
+                        aria_pressed=Signal::derive(move || theme.get() == Theme::Light)
+                        title=TextProp::from(move || match theme.get() {
                             Theme::Dark => copy.get().light_theme_label,
                             Theme::Light => copy.get().dark_theme_label,
-                        }
-                        on:click=move |_| theme.update(|current| *current = current.toggle())
+                        })
+                        on_click=move |_| theme.update(|current| *current = current.toggle())
                     >
                         <span aria-hidden="true">
                             {move || if theme.get() == Theme::Dark { "☀" } else { "☾" }}
                         </span>
-                    </button>
+                    </AppButton>
                 </div>
             </div>
             <div class="ornament" aria-hidden="true">"✦ ✦ ✦ ❧ ✦ ✦ ✦"</div>

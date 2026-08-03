@@ -1,3 +1,4 @@
+use super::AppButton;
 use crate::i18n::{Mystery, MysterySet};
 use crate::rosary_session::{Decade, RosarySession};
 use leptos::prelude::*;
@@ -17,11 +18,10 @@ pub(super) fn MysteryCard(
             <h4>{mystery.title}</h4>
             <p>{mystery.meditation}</p>
             <p class="mystery-fruit"><strong>{fruit_label}</strong><span>{mystery.fruit}</span></p>
-            <button
-                type="button"
+            <AppButton
                 class="mystery-pray-button"
-                aria-label=format!("{pray_label}: {}", mystery.title)
-                on:click=move |_| {
+                aria_label=format!("{pray_label}: {}", mystery.title)
+                on_click=move |_| {
                     guided_session.set(Some(RosarySession::start_for_mystery(
                         mystery_set,
                         decade,
@@ -29,7 +29,7 @@ pub(super) fn MysteryCard(
                 }
             >
                 {pray_label}
-            </button>
+            </AppButton>
         </article>
     }
 }

@@ -1,3 +1,4 @@
+use super::AppButton;
 use crate::calendar::{recommendation_for, CalendarDate};
 use crate::i18n::Translation;
 use crate::rosary_session::RosarySession;
@@ -112,16 +113,16 @@ pub(super) fn RosaryDiagram(
                 <Bead x=260.0 y=363.0 kind=BeadKind::OurFather/>
                 <RosaryCross/>
             </svg>
-            <button
-                type="button"
+            <AppButton
                 class="rosary-start-button"
-                on:click=move |_| {
+                aria_label=move || copy.get().guided_start_label
+                on_click=move |_| {
                     let recommended = recommendation_for(CalendarDate::today()).mystery;
                     guided_session.set(Some(RosarySession::start(recommended)));
                 }
             >
                 {move || copy.get().guided_start_label}
-            </button>
+            </AppButton>
         </div>
     }
 }
