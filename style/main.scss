@@ -286,7 +286,7 @@ button, input, select, textarea { font: inherit; }
 
 .section-kicker { margin: 0 0 20px; font-size: 12px; letter-spacing: 4px; }
 
-.guided-start-button,
+.rosary-start-button,
 .guided-primary-button,
 .guided-secondary-button,
 .guided-close-button,
@@ -300,7 +300,7 @@ button, input, select, textarea { font: inherit; }
   font: 600 13px "DM Sans", sans-serif;
 }
 
-.guided-start-button,
+.rosary-start-button,
 .guided-primary-button,
 .mystery-pray-button,
 .intention-add-button {
@@ -308,19 +308,18 @@ button, input, select, textarea { font: inherit; }
   color: var(--color-on-bright-accent);
 }
 
-.guided-start-button {
-  margin: 0 0 10px;
+.rosary-start-button {
+  margin: 0;
   padding: 9px 20px;
 }
 
 .guided-secondary-button,
-.guided-close-button,
 .intention-delete-button {
   background: var(--color-control-background);
   color: var(--color-text-primary);
 }
 
-.guided-start-button:focus-visible,
+.rosary-start-button:focus-visible,
 .guided-primary-button:focus-visible,
 .guided-secondary-button:focus-visible,
 .guided-close-button:focus-visible,
@@ -508,7 +507,20 @@ button, input, select, textarea { font: inherit; }
   text-transform: uppercase;
 }
 
-.guided-close-button { padding: 8px 14px; }
+.guided-close-button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-error);
+  font-size: 28px;
+  line-height: 1;
+}
 
 .guided-session-meta {
   display: flex;
@@ -643,8 +655,16 @@ button, input, select, textarea { font: inherit; }
 .creed-box p { margin: 0; color: var(--color-text-dim); font-size: 16px; font-style: italic; }
 .creed-box h3 { border: 0; }
 
-.rosary-wrap { width: min(100%, 660px); margin-block: 6px; }
+.rosary-wrap { position: relative; width: min(100%, 660px); margin-block: 6px; }
 .rosary { display: block; width: 100%; max-height: 560px; filter: drop-shadow(0 18px 35px rgba(0, 0, 0, .12)); }
+.rosary-start-button {
+  position: absolute;
+  top: 39.3%;
+  left: 50%;
+  z-index: 1;
+  max-width: calc(100% - 48px);
+  transform: translate(-50%, -50%);
+}
 .chain { fill: none; stroke: var(--color-diagram-chain); stroke-width: 1.5; stroke-dasharray: 3 2; }
 .bead { fill: url(#bead); }
 .large-bead { fill: url(#bead); filter: url(#glow); }
@@ -662,9 +682,6 @@ button, input, select, textarea { font: inherit; }
   stroke-linecap: round;
   opacity: .72;
 }
-.diagram-title { fill: var(--color-accent-bright); font: 600 14px "Cinzel", serif; letter-spacing: 1px; text-transform: uppercase; }
-.diagram-copy { fill: var(--color-diagram-copy); font: italic 13px "EB Garamond", serif; }
-
 .steps-legend {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -931,8 +948,7 @@ button, input, select, textarea { font: inherit; }
   .rosary { margin-block: -20px; }
   .steps-legend { grid-template-columns: 1fr; }
   .guided-prayer { padding-inline: 14px; }
-  .guided-prayer-header { align-items: flex-start; flex-direction: column; }
-  .guided-close-button { width: 100%; }
+  .guided-prayer-header { align-items: flex-start; flex-direction: row; }
   .guided-navigation { display: grid; grid-template-columns: 1fr; }
   .guided-navigation button,
   .guided-completion button { min-height: 49px; width: 100%; }

@@ -1,6 +1,5 @@
 use super::rosary_diagram::RosaryDiagram;
 use super::{GuideBox, GuidedPrayer, MysteryRecommendation, PrayerIntention};
-use crate::calendar::{recommendation_for, CalendarDate};
 use crate::i18n::{Language, Translation};
 use crate::rosary_session::RosarySession;
 use leptos::prelude::*;
@@ -16,16 +15,6 @@ pub fn RosaryGuide(
         <section class="guide" aria-labelledby="guide-heading">
             <h2 id="guide-heading" class="section-kicker">{move || copy.get().guide_title}</h2>
             <PrayerIntention copy intentions />
-            <button
-                type="button"
-                class="guided-start-button"
-                on:click=move |_| {
-                    let recommended = recommendation_for(CalendarDate::today()).mystery;
-                    guided_session.set(Some(RosarySession::start(recommended)));
-                }
-            >
-                {move || copy.get().guided_start_label}
-            </button>
 
             <GuidedPrayer copy language session=guided_session intentions />
 
@@ -36,7 +25,7 @@ pub fn RosaryGuide(
                 </article>
             </GuideBox>
 
-            <RosaryDiagram copy />
+            <RosaryDiagram copy guided_session />
 
             <MysteryRecommendation copy language />
 

@@ -32,9 +32,10 @@ pub fn GuidedPrayer(
                         <button
                             type="button"
                             class="guided-close-button"
+                            aria-label=move || copy.get().guided_close_label
                             on:click=move |_| session.set(None)
                         >
-                            {move || copy.get().guided_close_label}
+                            <span aria-hidden="true">"×"</span>
                         </button>
                     </header>
 

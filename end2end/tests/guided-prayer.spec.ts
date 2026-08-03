@@ -9,12 +9,26 @@ function guidedPrayer(page: Page): Locator {
 test("opens from the guide and supports keyboard navigation, reset, and close", async ({ page }) => {
   await page.goto(APP_URL);
 
-  const start = page.getByRole("button", { name: "Avvia il Rosario guidato" });
+  const rosary = page.locator(".rosary-wrap");
+  const start = rosary.getByRole("button", { name: "Avvia il Rosario guidato" });
+  await expect(start).toBeVisible();
+  await expect(rosary.locator(".rosary text")).toHaveCount(0);
+
+  const [startBox, rosaryBox] = await Promise.all([
+    start.boundingBox(),
+    rosary.locator(".rosary").boundingBox(),
+  ]);
+  expect(startBox).not.toBeNull();
+  expect(rosaryBox).not.toBeNull();
+  expect(startBox!.x + startBox!.width / 2).toBeCloseTo(rosaryBox!.x + rosaryBox!.width / 2, 0);
+  expect(startBox!.y + startBox!.height / 2).toBeCloseTo(rosaryBox!.y + rosaryBox!.height * 165 / 420, 0);
+
   await start.focus();
   await page.keyboard.press("Enter");
 
   const guided = guidedPrayer(page);
   await expect(guided).toBeVisible();
+  await expect(guided.getByRole("button", { name: "Chiudi il Rosario guidato" })).toHaveText("×");
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Segno della Croce");
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 1 di 31");
   await expect(guided.getByRole("button", { name: "Indietro" })).toBeDisabled();

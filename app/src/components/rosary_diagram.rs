@@ -1,4 +1,6 @@
+use crate::calendar::{recommendation_for, CalendarDate};
 use crate::i18n::Translation;
+use crate::rosary_session::RosarySession;
 use leptos::prelude::*;
 
 #[derive(Clone, Copy)]
@@ -46,7 +48,10 @@ fn RosaryCross() -> impl IntoView {
 }
 
 #[component]
-pub(super) fn RosaryDiagram(copy: Memo<Translation>) -> impl IntoView {
+pub(super) fn RosaryDiagram(
+    copy: Memo<Translation>,
+    guided_session: RwSignal<Option<RosarySession>>,
+) -> impl IntoView {
     const CENTER_X: f64 = 260.0;
     const CENTER_Y: f64 = 165.0;
     const RADIUS_X: f64 = 132.0;
@@ -106,10 +111,17 @@ pub(super) fn RosaryDiagram(copy: Memo<Translation>) -> impl IntoView {
                 <Bead x=260.0 y=345.0 kind=BeadKind::Pendant/>
                 <Bead x=260.0 y=363.0 kind=BeadKind::OurFather/>
                 <RosaryCross/>
-                <text x="260" y="157" text-anchor="middle" class="diagram-title">{move || copy.get().hail_mary}</text>
-                <text x="260" y="174" text-anchor="middle" class="diagram-copy">"10 × 5"</text>
-                <text x="403" y="169" class="diagram-copy">{move || copy.get().our_father}</text>
             </svg>
+            <button
+                type="button"
+                class="rosary-start-button"
+                on:click=move |_| {
+                    let recommended = recommendation_for(CalendarDate::today()).mystery;
+                    guided_session.set(Some(RosarySession::start(recommended)));
+                }
+            >
+                {move || copy.get().guided_start_label}
+            </button>
         </div>
     }
 }
