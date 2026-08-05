@@ -127,9 +127,10 @@ the application composition and follow the data outward:
   layout, not a replacement visual treatment.
 - `app/src/components/guide_box.rs` provides the shared visual shell used by
   the guide's bordered panels while preserving semantic inner elements.
-- `app/src/components/prayer_sidebar.rs` renders the five reusable prayers.
+- `app/src/components/prayer_sidebar.rs` renders the seven reusable prayers,
+  including the Apostles' Creed first and Eternal Rest last.
 - `app/src/components/rosary_guide.rs` composes the intention editor, guided
-  prayer, creed, rosary diagram, step legend, ending text, and decade note.
+  prayer, rosary diagram, step legend, ending text, and decade note.
 - `app/src/components/prayer_intention/mod.rs` owns the intention editor
   signals, focus effects, and top-level composition. Its sibling modules
   separate metadata and feedback (`meta.rs`), tag/draft/add rendering
@@ -137,8 +138,9 @@ the application composition and follow the data outward:
   (`state.rs`). The `+` control stays last in the tag row and creates a focused
   inline draft; Enter or blur confirms non-empty text, while an empty draft
   disappears. Persist only confirmed add, delete, and reorder changes.
-- `app/src/components/guided_prayer.rs` renders the active `RosarySession` and
-  shows the shared ordered intentions at the start and completion states.
+- `app/src/components/guided_prayer.rs` renders the active `RosarySession`,
+  shows the shared ordered intentions at the start and completion states, and
+  presents the optional post-Rosary prayers after completion.
 - `app/src/components/rosary_diagram.rs` owns the diagram SVG and its labels.
 - `app/src/components/mystery_recommendation.rs` formats the current date and
   localized mystery-set label, then renders the recommendation box. Keep

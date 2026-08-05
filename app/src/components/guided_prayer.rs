@@ -176,6 +176,24 @@ pub fn GuidedPrayer(
                     >
                         <div class="guided-completion">
                             <p>{move || copy.get().guided_completion_message}</p>
+                            <section
+                                class="post-rosary-prayers"
+                                aria-labelledby="post-rosary-prayers-title"
+                            >
+                                <h5 id="post-rosary-prayers-title">
+                                    {move || copy.get().post_rosary_prayers_title}
+                                </h5>
+                                <For
+                                    each=move || copy.get().post_rosary_prayers.iter().copied()
+                                    key=|prayer| prayer.title
+                                    children=move |prayer| view! {
+                                        <article class="post-rosary-prayer">
+                                            <h6>{prayer.title}</h6>
+                                            <p>{prayer.text}</p>
+                                        </article>
+                                    }
+                                />
+                            </section>
                             <AppButton
                                 class="guided-primary-button"
                                 aria_label=move || copy.get().guided_restart_label

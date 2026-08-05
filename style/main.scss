@@ -222,7 +222,7 @@ button, input, select, textarea { font: inherit; }
 .prayer-block { padding: 22px 0; border-bottom: 1px solid var(--color-card-divider); }
 .prayer-block:last-child { border-bottom: 0; }
 
-.prayer-block h3, .creed-box h3, .end-box h3 {
+.prayer-block h3, .end-box h3 {
   margin: 0 0 8px;
   padding-bottom: 7px;
   border-bottom: 0;
@@ -613,15 +613,39 @@ button, input, select, textarea { font: inherit; }
   color: var(--color-text-dim);
 }
 
-.guided-completion .app-button { margin-top: 18px; }
-
-.creed-box {
-  padding: 18px 24px;
-  text-align: center;
+.post-rosary-prayers {
+  margin-top: 22px;
+  border-top: 1px solid var(--color-card-divider);
+  padding-top: 16px;
 }
 
-.creed-box p { margin: 0; color: var(--color-text-dim); font-size: 16px; font-style: italic; }
-.creed-box h3 { border: 0; }
+.post-rosary-prayers h5,
+.post-rosary-prayer h6 {
+  margin: 0;
+  color: var(--color-accent);
+  font: 600 11px "DM Sans", sans-serif;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.post-rosary-prayers h5 { margin-bottom: 14px; }
+
+.post-rosary-prayer + .post-rosary-prayer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-card-divider);
+}
+
+.post-rosary-prayer h6 { margin-bottom: 5px; }
+
+.post-rosary-prayer p {
+  margin: 0;
+  color: var(--color-text-primary);
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.guided-completion .app-button { margin-top: 18px; }
 
 .rosary-wrap { position: relative; width: min(100%, 660px); margin-block: 6px; }
 .rosary { display: block; width: 100%; max-height: 560px; filter: drop-shadow(0 18px 35px rgba(0, 0, 0, .12)); }
@@ -902,7 +926,6 @@ button, input, select, textarea { font: inherit; }
   .header-row h1 { font-size: 27px; }
   .ornament { letter-spacing: 3px; }
   .guide { padding: 22px 10px 24px; border-radius: 20px; }
-  .creed-box { padding-inline: 12px; }
   .rosary { margin-block: -20px; }
   .steps-legend { grid-template-columns: 1fr; }
   .guided-prayer { padding-inline: 14px; }

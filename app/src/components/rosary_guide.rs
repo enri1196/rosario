@@ -18,13 +18,6 @@ pub fn RosaryGuide(
 
             <GuidedPrayer copy language session=guided_session intentions />
 
-            <GuideBox>
-                <article class="creed-box">
-                    <h3>{move || copy.get().creed_title}</h3>
-                    <p>{move || copy.get().creed}</p>
-                </article>
-            </GuideBox>
-
             <RosaryDiagram copy guided_session />
 
             <MysteryRecommendation copy language />

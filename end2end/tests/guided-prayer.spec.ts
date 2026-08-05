@@ -51,6 +51,35 @@ test("opens from the guide and supports keyboard navigation, reset, and close", 
   await expect(page.getByRole("heading", { name: "Come recitare il Rosario" })).toBeVisible();
 });
 
+test("lists the Creed first and Eternal Rest last in the prayer sidebar", async ({ page }) => {
+  await page.goto(APP_URL);
+
+  const prayers = page.getByRole("complementary", { name: "Preghiere del Rosario" });
+  await expect(prayers.getByRole("heading", { level: 3 })).toHaveText([
+    "Credo degli Apostoli",
+    "Padre Nostro",
+    "Ave Maria",
+    "Gloria al Padre",
+    "O Mio Gesù",
+    "Salve Regina",
+    "L'Eterno Riposo",
+  ]);
+  await expect(prayers).toContainText("L'eterno riposo dona loro, o Signore");
+
+  await page.getByLabel("Lingua").selectOption("en");
+  const englishPrayers = page.getByRole("complementary", { name: "Prayers of the Rosary" });
+  await expect(englishPrayers.getByRole("heading", { level: 3 })).toHaveText([
+    "The Apostles' Creed",
+    "Our Father",
+    "Hail Mary",
+    "Glory Be",
+    "O My Jesus",
+    "Hail, Holy Queen",
+    "Eternal Rest",
+  ]);
+  await expect(englishPrayers).toContainText("Eternal rest grant unto them, O Lord");
+});
+
 test("opens the shared session for a specific mystery card", async ({ page }) => {
   await page.goto(APP_URL);
 
@@ -94,6 +123,14 @@ test("progresses through decades to completion and restarts", async ({ page }) =
   }
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Rosario completato");
   await expect(guided).toContainText("Hai completato il Rosario");
+  await expect(guided.getByRole("heading", { level: 5 })).toHaveText(
+    "Preghiere facoltative dopo il Rosario",
+  );
+  await expect(guided).toContainText("Tre L'Eterno Riposo per le anime del Purgatorio");
+  await expect(guided).toContainText("L'eterno riposo dona loro, o Signore");
+  await expect(guided).toContainText("Per le intenzioni del Santo Padre");
+  await expect(guided).toContainText("Angelo di Dio");
+  await expect(guided).toContainText("Nel nome del Padre e del Figlio");
 
   await guided.getByRole("button", { name: "Prega di nuovo" }).click();
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 1 di 31");

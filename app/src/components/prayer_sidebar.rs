@@ -7,7 +7,7 @@ pub fn PrayerSidebar(copy: Memo<Translation>) -> impl IntoView {
         <aside class="prayers-col" aria-labelledby="prayers-heading">
             <h2 id="prayers-heading" class="visually-hidden">{move || copy.get().prayers_heading}</h2>
             <For
-                each=move || copy.get().prayers.iter().copied().enumerate()
+                each=move || copy.get().sidebar_prayers.iter().copied().enumerate()
                 key=|(_, prayer)| prayer.title
                 children=move |(_, prayer)| view! {
                     <article class="prayer-block">
