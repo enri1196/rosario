@@ -114,8 +114,9 @@ the application composition and follow the data outward:
   weekday defaults, liturgical seasons, feast overrides, and pure calendar
   tests used by the recommendation.
 - `app/src/rosary_session.rs` contains the browser-independent guided Rosary
-  progression model. Keep step ordering and navigation rules here rather than
-  reconstructing them in components.
+  progression model, including typed decade and prayer-phase progress. Keep
+  step ordering and navigation rules here rather than reconstructing them in
+  components.
 - `app/src/intentions.rs` owns intention normalization, the 50-character and
   50-tag limits, ordered JSON persistence under `rosary-intentions`, legacy
   single-value migration, and storage-disabled fallbacks.
@@ -140,7 +141,9 @@ the application composition and follow the data outward:
   disappears. Persist only confirmed add, delete, and reorder changes.
 - `app/src/components/guided_prayer.rs` renders the active `RosarySession`,
   shows the shared ordered intentions at the start and completion states, and
-  presents the optional post-Rosary prayers after completion.
+  presents the optional post-Rosary prayers after completion. It also owns
+  guided-step focus and internal scroll restoration; desktop navigation stays
+  beside the prayer while narrow layouts use a labeled bottom control bar.
 - `app/src/components/rosary_diagram.rs` owns the diagram SVG and its labels.
 - `app/src/components/mystery_recommendation.rs` formats the current date and
   localized mystery-set label, then renders the recommendation box. Keep

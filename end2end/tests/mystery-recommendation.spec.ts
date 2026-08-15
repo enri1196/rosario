@@ -30,6 +30,7 @@ test("starts on the browser-local current date and resets after exploring", asyn
   await expect(page.locator(".recommendation-date")).toContainText("2026-08-03");
   await expect(page.locator(".recommendation-mystery")).toContainText("Misteri Gaudiosi");
   await expect(page.locator(".recommendation-reason")).toContainText("giorno della settimana");
+  await expect(dateInput).toHaveValue("2026-08-03");
 
   await page.getByRole("button", { name: "Oggi" }).click();
   await expect(dateInput).toHaveValue(await browserLocalDateInputValue(page));

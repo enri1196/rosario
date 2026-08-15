@@ -91,7 +91,7 @@ test("adds, reloads, and shares an ordered private tag list with guided prayer",
   await expect(guided.locator(".guided-intentions")).toHaveCount(0);
 
   for (let index = 0; index < 30; index += 1) {
-    await guided.locator(".guided-primary-button").click();
+    await guided.locator(".guided-next-button").click();
   }
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Rosario completato");
   await expect(guided.locator(".guided-intention-tag")).toHaveText(privateIntentions);

@@ -28,12 +28,19 @@ test("opens from the guide and supports keyboard navigation, reset, and close", 
 
   const guided = guidedPrayer(page);
   await expect(guided).toBeVisible();
-  await expect(guided.getByRole("button", { name: "Chiudi il Rosario guidato" })).toHaveText("×");
+  const close = guided.getByRole("button", { name: "Chiudi il Rosario guidato" });
+  await expect(close.locator("svg")).toHaveCount(1);
+  await expect(close).toHaveAttribute("title", "Chiudi il Rosario guidato");
+  await expect(guided.locator(".guided-restart-button svg")).toHaveCount(1);
+  await expect(guided.locator(".guided-restart-button")).toHaveAttribute("title", "Ricomincia");
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Segno della Croce");
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 1 di 31");
   await expect(guided.getByRole("button", { name: "Indietro" })).toBeDisabled();
   await expect(guided.getByRole("button", { name: "Avanti" })).toBeEnabled();
-  await expect(guided.locator(".guided-step-panel")).toHaveCSS("text-align", "center");
+  await expect(guided.locator(".guided-step-panel-content")).toHaveCSS("text-align", "center");
+  await expect(guided.locator(".guided-step-panel")).toHaveAttribute("tabindex", "0");
+  await expect(guided.getByRole("button", { name: "Indietro" }).locator("svg")).toHaveCount(1);
+  await expect(guided.getByRole("button", { name: "Avanti" }).locator("svg")).toHaveCount(1);
 
   const [previousBox, panelBox, nextBox] = await Promise.all([
     guided.getByRole("button", { name: "Indietro" }).boundingBox(),
@@ -46,19 +53,25 @@ test("opens from the guide and supports keyboard navigation, reset, and close", 
   expect(previousBox!.y + previousBox!.height / 2).toBeCloseTo(panelBox!.y + panelBox!.height / 2, 0);
   expect(nextBox!.y + nextBox!.height / 2).toBeCloseTo(panelBox!.y + panelBox!.height / 2, 0);
 
-  await guided.getByRole("button", { name: "Avanti" }).click();
+  await guided.getByRole("button", { name: "Avanti" }).focus();
+  await page.keyboard.press("Enter");
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Credo degli Apostoli");
   await expect(guided.getByRole("heading", { level: 4 })).toBeFocused();
   await expect(guided.locator(".guided-prayer-text")).toContainText("Credo in Dio");
 
-  await guided.getByRole("button", { name: "Indietro" }).click();
+  await guided.getByRole("button", { name: "Indietro" }).focus();
+  await page.keyboard.press("Enter");
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 1 di 31");
+  await expect(guided.getByRole("heading", { level: 4 })).toBeFocused();
   await guided.getByRole("button", { name: "Avanti" }).click();
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 2 di 31");
-  await guided.locator(".guided-restart-button").click();
+  await guided.locator(".guided-restart-button").focus();
+  await page.keyboard.press("Enter");
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 1 di 31");
+  await expect(guided.getByRole("heading", { level: 4 })).toBeFocused();
 
-  await guided.getByRole("button", { name: "Chiudi il Rosario guidato" }).click();
+  await guided.getByRole("button", { name: "Chiudi il Rosario guidato" }).focus();
+  await page.keyboard.press("Enter");
   await expect(guided).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Come recitare il Rosario" })).toBeVisible();
 });
@@ -113,7 +126,7 @@ test("opens the shared session for a specific mystery card", async ({ page }) =>
   await expect(guided.getByRole("heading", { level: 4 })).toBeFocused();
 });
 
-test("progresses through decades to completion and restarts", async ({ page }) => {
+test("reports decade progress, completes, and restarts from the primary action", async ({ page }) => {
   await page.goto(APP_URL);
   await page.getByRole("button", { name: "Avvia il Rosario guidato" }).click();
 
@@ -121,19 +134,30 @@ test("progresses through decades to completion and restarts", async ({ page }) =
   for (let index = 0; index < 5; index += 1) {
     await guided.locator(".guided-next-button").click();
   }
-  await expect(guided.locator(".guided-progress")).toHaveText("Passo 6 di 31");
-  await expect(guided.locator(".guided-active-decade")).toContainText("Decina 1 di 5");
+  await expect(guided.locator(".guided-progress")).toHaveText(
+    "Passo 6 di 31 · Decina 1 di 5 · Preghiera 1 di 5",
+  );
 
-  for (let index = 0; index < 5; index += 1) {
+  for (let index = 0; index < 2; index += 1) {
     await guided.locator(".guided-next-button").click();
   }
-  await expect(guided.locator(".guided-progress")).toHaveText("Passo 11 di 31");
-  await expect(guided.locator(".guided-active-decade")).toContainText("Decina 2 di 5");
+  await expect(guided.locator(".guided-progress")).toHaveText(
+    "Passo 8 di 31 · Decina 1 di 5 · Preghiera 3 di 5",
+  );
+  await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Dieci Ave Maria");
+
+  for (let index = 0; index < 3; index += 1) {
+    await guided.locator(".guided-next-button").click();
+  }
+  await expect(guided.locator(".guided-progress")).toHaveText(
+    "Passo 11 di 31 · Decina 2 di 5 · Preghiera 1 di 5",
+  );
 
   for (let index = 0; index < 21; index += 1) {
     await guided.locator(".guided-next-button").click();
   }
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Rosario completato");
+  await expect(guided.getByRole("heading", { level: 4 })).toBeFocused();
   await expect(guided).toContainText("Hai completato il Rosario");
   await expect(guided.getByRole("heading", { level: 5 })).toHaveText(
     "Preghiere facoltative dopo il Rosario",
@@ -144,12 +168,56 @@ test("progresses through decades to completion and restarts", async ({ page }) =
   await expect(guided).toContainText("Angelo di Dio");
   await expect(guided).toContainText("Nel nome del Padre e del Figlio");
 
-  await guided.getByRole("button", { name: "Ricomincia" }).click();
+  const prayAgain = guided.getByRole("button", { name: "Prega di nuovo" });
+  await expect(prayAgain).toBeVisible();
+  await prayAgain.focus();
+  await page.keyboard.press("Enter");
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 1 di 31");
   await expect(guided.getByRole("button", { name: "Indietro" })).toBeDisabled();
+  await expect(guided.getByRole("heading", { level: 4 })).toBeFocused();
 });
 
-test("keeps the guided flow bilingual in dark and light themes", async ({ page }) => {
+test("uses a full-width mobile panel and labeled bottom controls without overflow", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 620 });
+  await page.goto(APP_URL);
+  await page.getByRole("button", { name: "Avvia il Rosario guidato" }).click();
+
+  const guided = guidedPrayer(page);
+  const panel = guided.locator(".guided-step-panel");
+  const previous = guided.getByRole("button", { name: "Indietro" });
+  const next = guided.getByRole("button", { name: "Avanti" });
+
+  await expect(previous.locator(".guided-control-label")).toHaveText("Indietro");
+  await expect(next.locator(".guided-control-label")).toHaveText("Avanti");
+
+  const [panelBox, previousBox, nextBox] = await Promise.all([
+    panel.boundingBox(),
+    previous.boundingBox(),
+    next.boundingBox(),
+  ]);
+  expect(panelBox).not.toBeNull();
+  expect(previousBox).not.toBeNull();
+  expect(nextBox).not.toBeNull();
+  expect(previousBox!.y).toBeGreaterThanOrEqual(panelBox!.y + panelBox!.height);
+  expect(nextBox!.y).toBeGreaterThanOrEqual(panelBox!.y + panelBox!.height);
+  expect(previousBox!.height).toBeGreaterThanOrEqual(48);
+  expect(nextBox!.height).toBeGreaterThanOrEqual(48);
+
+  await next.click();
+  await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Credo degli Apostoli");
+  await expect.poll(() => panel.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
+  await panel.evaluate((element) => {
+    element.scrollTop = element.scrollHeight;
+  });
+  await expect.poll(() => panel.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+
+  await previous.click();
+  await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Segno della Croce");
+  await expect.poll(() => panel.evaluate((element) => element.scrollTop)).toBe(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
+
+test("keeps decade progress bilingual in dark and light themes", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto(APP_URL);
@@ -163,6 +231,12 @@ test("keeps the guided flow bilingual in dark and light themes", async ({ page }
   let guided = page.getByRole("region", { name: "Guided Rosary" });
   await expect(guided.locator(".guided-progress")).toHaveText("Step 1 of 31");
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Sign of the Cross");
+  for (let index = 0; index < 5; index += 1) {
+    await guided.getByRole("button", { name: "Next" }).click();
+  }
+  await expect(guided.locator(".guided-progress")).toHaveText(
+    "Step 6 of 31 · Decade 1 of 5 · Prayer 1 of 5",
+  );
   await guided.getByRole("button", { name: "Close guided Rosary" }).click();
 
   await page.getByRole("button", { name: /Theme: Switch to light theme/ }).click();
@@ -179,4 +253,15 @@ test("keeps the guided flow bilingual in dark and light themes", async ({ page }
   const mobileNext = await guidedPrayer(page).getByRole("button", { name: "Avanti" }).boundingBox();
   expect(mobileNext).not.toBeNull();
   expect(mobileNext!.height).toBeGreaterThanOrEqual(48);
+});
+
+test("removes guided step motion when reduced motion is requested", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(APP_URL);
+  await page.getByRole("button", { name: "Avvia il Rosario guidato" }).click();
+
+  const content = guidedPrayer(page).locator(".guided-step-panel-content");
+  await expect(content).toHaveCSS("animation-name", "none");
+  await guidedPrayer(page).getByRole("button", { name: "Avanti" }).click();
+  await expect(content).toHaveCSS("animation-name", "none");
 });

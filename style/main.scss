@@ -339,6 +339,15 @@ button, input, select, textarea { font: inherit; }
   opacity: .48;
 }
 
+.app-button.theme-toggle {
+  width: var(--header-control-size);
+  min-width: var(--header-control-size);
+  max-width: var(--header-control-size);
+  height: var(--header-control-size);
+  min-height: var(--header-control-size);
+  max-height: var(--header-control-size);
+}
+
 .prayer-intention {
   padding: clamp(18px, 4vw, 26px);
 }
@@ -510,7 +519,6 @@ button, input, select, textarea { font: inherit; }
 
 .guided-session-meta p,
 .guided-progress,
-.guided-active-decade,
 .guided-closing-note,
 .guided-completion p {
   margin: 0;
@@ -594,8 +602,16 @@ button, input, select, textarea { font: inherit; }
   grid-column: 2;
   min-width: 0;
   align-self: stretch;
+  max-height: max(20rem, calc(100dvh - 16rem));
   overflow-y: auto;
+  overscroll-behavior: contain;
   scrollbar-gutter: stable;
+}
+
+.guided-step-panel:focus-visible {
+  border-radius: var(--radius-small);
+  outline: 3px solid var(--color-focus-outline);
+  outline-offset: 2px;
 }
 
 .guided-step-panel-content {
@@ -605,6 +621,24 @@ button, input, select, textarea { font: inherit; }
   justify-content: center;
   padding: 1rem;
   text-align: center;
+}
+
+.guided-step-transition--0 {
+  animation: guided-step-enter-even 180ms ease-out;
+}
+
+.guided-step-transition--1 {
+  animation: guided-step-enter-odd 180ms ease-out;
+}
+
+@keyframes guided-step-enter-even {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes guided-step-enter-odd {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .guided-step-panel .guided-progress { margin-top: 0; }
@@ -633,17 +667,21 @@ button, input, select, textarea { font: inherit; }
   min-height: 48px;
 }
 
+.guided-control-icon {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.guided-control-label { display: none; }
+
 .guided-step-content {
   margin-top: 14px;
   text-align: center;
-}
-
-.guided-active-decade {
-  margin-bottom: 10px;
-  color: var(--color-accent);
-  font: 600 12px "DM Sans", sans-serif;
-  letter-spacing: .5px;
-  text-transform: uppercase;
 }
 
 .guided-prayer-text {
@@ -663,7 +701,10 @@ button, input, select, textarea { font: inherit; }
 .guided-completion {
   margin-top: 14px;
   color: var(--color-text-dim);
+  text-align: center;
 }
+
+.guided-completion h4 { margin-bottom: 12px; }
 
 .post-rosary-prayers {
   margin-top: 22px;
@@ -982,7 +1023,33 @@ button, input, select, textarea { font: inherit; }
   .steps-legend { grid-template-columns: 1fr; }
   .guided-prayer { padding-inline: 14px; }
   .guided-prayer-header { align-items: flex-start; flex-direction: row; }
-  .guided-step-layout { gap: 4px; }
+  .guided-step-layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto;
+    gap: 12px 10px;
+    min-height: 0;
+  }
+  .guided-step-panel {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    min-height: clamp(18rem, 48dvh, 26rem);
+    max-height: max(18rem, calc(100dvh - 20rem));
+  }
+  .guided-step-panel-content { min-height: clamp(18rem, 48dvh, 26rem); padding: .75rem .5rem; }
+  .guided-step-control { align-self: stretch; }
+  .guided-step-control--previous { grid-column: 1; grid-row: 2; }
+  .guided-step-control--next { grid-column: 2; grid-row: 2; }
+  .guided-side-button {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+    justify-content: center;
+    gap: 8px;
+    border-radius: var(--radius-small);
+    padding: 8px 10px;
+  }
+  .guided-control-label { display: inline; font-size: 12px; line-height: 1.2; }
   .guided-completion .app-button { min-height: 49px; width: 100%; }
   .intention-meta { display: grid; grid-template-columns: 1fr auto; }
   .intention-help { grid-column: 1 / -1; }
@@ -996,4 +1063,6 @@ button, input, select, textarea { font: inherit; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .mystery-card { transition: none; }
+  .guided-step-transition--0,
+  .guided-step-transition--1 { animation: none; }
 }

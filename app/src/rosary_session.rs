@@ -4,6 +4,9 @@ pub(crate) const GUIDED_STEP_COUNT: usize = 31;
 const OPENING_STEP_COUNT: usize = 5;
 const STEPS_PER_DECADE: usize = 5;
 
+/// Number of guided prayer phases represented inside each decade.
+pub(crate) const DECADE_PRAYER_COUNT: usize = STEPS_PER_DECADE;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum OpeningStep {
     SignOfCross,
@@ -20,6 +23,19 @@ pub(crate) enum DecadePrayer {
     TenHailMarys,
     GloryBe,
     FatimaPrayer,
+}
+
+impl DecadePrayer {
+    /// Returns the one-based position of this prayer phase within a decade.
+    pub(crate) const fn number(self) -> usize {
+        match self {
+            Self::Mystery => 1,
+            Self::OurFather => 2,
+            Self::TenHailMarys => 3,
+            Self::GloryBe => 4,
+            Self::FatimaPrayer => 5,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -130,6 +146,25 @@ pub(crate) enum SessionCompletion {
     Complete,
 }
 
+/// Typed decade and prayer-phase progress for the active guided step.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct DecadeProgress {
+    decade: Decade,
+    prayer: DecadePrayer,
+}
+
+impl DecadeProgress {
+    /// Returns the one-based decade number.
+    pub(crate) const fn decade_number(self) -> usize {
+        self.decade.number()
+    }
+
+    /// Returns the one-based prayer-phase number within the active decade.
+    pub(crate) const fn prayer_number(self) -> usize {
+        self.prayer.number()
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct RosarySession {
     active_step: GuidedStep,
@@ -198,6 +233,18 @@ impl RosarySession {
         self.active_step.decade()
     }
 
+    /// Returns typed decade-level progress when the active step belongs to a decade.
+    pub(crate) const fn active_decade_progress(self) -> Option<DecadeProgress> {
+        let Some(decade) = self.active_decade() else {
+            return None;
+        };
+        let GuidedStep::Decade { prayer, .. } = self.active_step else {
+            return None;
+        };
+
+        Some(DecadeProgress { decade, prayer })
+    }
+
     pub(crate) const fn selected_mystery_set(self) -> MysterySet {
         self.selected_mystery_set
     }
@@ -226,7 +273,8 @@ impl RosarySession {
 #[cfg(test)]
 mod tests {
     use super::{
-        Decade, GuidedStep, OpeningStep, RosarySession, GUIDED_STEP_COUNT, STEPS_PER_DECADE,
+        Decade, DecadePrayer, GuidedStep, OpeningStep, RosarySession, DECADE_PRAYER_COUNT,
+        GUIDED_STEP_COUNT, OPENING_STEP_COUNT, STEPS_PER_DECADE,
     };
     use crate::i18n::MysterySet;
 
@@ -264,6 +312,43 @@ mod tests {
                 assert_eq!(session.active_decade(), Some(expected_decade));
             }
         }
+    }
+
+    #[test]
+    fn reports_each_decade_prayer_position() {
+        let mut session = RosarySession::start(MysterySet::Luminous);
+        let prayers = [
+            DecadePrayer::Mystery,
+            DecadePrayer::OurFather,
+            DecadePrayer::TenHailMarys,
+            DecadePrayer::GloryBe,
+            DecadePrayer::FatimaPrayer,
+        ];
+
+        assert_eq!(session.active_decade_progress(), None);
+        for _ in 0..OPENING_STEP_COUNT {
+            session.next();
+        }
+
+        for decade_number in 1..=5 {
+            for (prayer_index, expected_prayer) in prayers.into_iter().enumerate() {
+                assert_eq!(
+                    session.active_step(),
+                    GuidedStep::Decade {
+                        decade: Decade::from_index(decade_number - 1).unwrap(),
+                        prayer: expected_prayer,
+                    }
+                );
+                let progress = session.active_decade_progress().unwrap();
+                assert_eq!(progress.decade_number(), decade_number);
+                assert_eq!(progress.prayer_number(), prayer_index + 1);
+                assert!(progress.prayer_number() <= DECADE_PRAYER_COUNT);
+                session.next();
+            }
+        }
+
+        assert_eq!(session.active_step(), GuidedStep::Closing);
+        assert_eq!(session.active_decade_progress(), None);
     }
 
     #[test]

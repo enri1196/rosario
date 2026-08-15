@@ -1,11 +1,13 @@
 use super::{AppButton, ButtonVariant, GuideBox};
 use crate::i18n::{Language, Mystery, MysterySet, Translation};
 use crate::rosary_session::{
-    Decade, DecadePrayer, GuidedStep, OpeningStep, RosarySession, GUIDED_STEP_COUNT,
+    Decade, DecadePrayer, GuidedStep, OpeningStep, RosarySession, DECADE_PRAYER_COUNT,
+    GUIDED_STEP_COUNT,
 };
 use leptos::{html, prelude::*};
 use std::cell::Cell;
 
+/// Renders the shared guided Rosary session with responsive, accessible navigation.
 #[component]
 pub fn GuidedPrayer(
     copy: Memo<Translation>,
@@ -14,11 +16,15 @@ pub fn GuidedPrayer(
     intentions: RwSignal<Vec<String>>,
 ) -> impl IntoView {
     let step_heading = NodeRef::<html::H4>::new();
-    let was_open = Cell::new(false);
+    let step_panel = NodeRef::<html::Div>::new();
+    let focused_step = Cell::new(None);
 
     Effect::new(move |_| {
-        let is_open = session.get().is_some();
-        if is_open && !was_open.replace(is_open) {
+        let current_step = session
+            .get()
+            .map(|current| (current.step_number(), current.is_complete()));
+        if current_step.is_some() && focused_step.replace(current_step) != current_step {
+            reset_step_panel_scroll(step_panel);
             focus_step_heading(step_heading);
         }
     });
@@ -34,19 +40,25 @@ pub fn GuidedPrayer(
                                 variant=ButtonVariant::IconAccent
                                 class="guided-restart-button"
                                 aria_label=move || copy.get().guided_reset_label
+                                title=TextProp::from(move || copy.get().guided_reset_label)
                                 on_click=move |_| {
                                     update_session(session, RosarySession::reset);
-                                    focus_step_heading(step_heading);
                                 }
                             >
-                                <span aria-hidden="true">"↶"</span>
+                                <svg class="guided-control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M4 7v5h5" />
+                                    <path d="M5.5 16a8 8 0 1 0-.8-7.9L4 12" />
+                                </svg>
                             </AppButton>
                             <AppButton
                                 variant=ButtonVariant::Close
                                 aria_label=move || copy.get().guided_close_label
+                                title=TextProp::from(move || copy.get().guided_close_label)
                                 on_click=move |_| session.set(None)
                             >
-                                <span aria-hidden="true">"×"</span>
+                                <svg class="guided-control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="m6 6 12 12M18 6 6 18" />
+                                </svg>
                             </AppButton>
                         </div>
                     </header>
@@ -103,17 +115,22 @@ pub fn GuidedPrayer(
                                         variant=ButtonVariant::IconSecondary
                                         class="guided-side-button guided-previous-button"
                                         aria_label=move || copy.get().guided_previous_label
+                                        title=TextProp::from(move || copy.get().guided_previous_label)
                                         disabled=Signal::derive(move || session.get().is_none_or(|current| current.is_first_step()))
                                         on_click=move |_| {
                                             update_session(session, RosarySession::previous);
-                                            focus_step_heading(step_heading);
                                         }
                                     >
-                                        <span aria-hidden="true">"←"</span>
+                                        <svg class="guided-control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="m15 18-6-6 6-6" />
+                                        </svg>
+                                        <span class="guided-control-label">
+                                            {move || copy.get().guided_previous_label}
+                                        </span>
                                     </AppButton>
                                 </div>
-                                <div class="guided-step-panel">
-                                    <div class="guided-step-panel-content">
+                                <div class="guided-step-panel" node_ref=step_panel tabindex="0">
+                                    <div class=move || step_transition_class(session.get())>
                                         <p class="guided-progress" aria-live="polite" aria-atomic="true">
                                             {move || progress_text(copy.get(), session.get())}
                                         </p>
@@ -128,11 +145,6 @@ pub fn GuidedPrayer(
                                             {move || session.get().map(|current| step_title(copy.get(), current)).unwrap_or("")}
                                         </h4>
                                         <div class="guided-step-content">
-                                            <Show when=move || session.get().and_then(|current| current.active_decade()).is_some()>
-                                                <p class="guided-active-decade">
-                                                    {move || active_decade_text(copy.get(), session.get())}
-                                                </p>
-                                            </Show>
                                             <Show when=move || !step_body(copy.get(), session.get()).is_empty()>
                                                 <p class="guided-prayer-text">
                                                     {move || step_body(copy.get(), session.get())}
@@ -150,26 +162,50 @@ pub fn GuidedPrayer(
                                     <AppButton
                                         variant=ButtonVariant::IconPrimary
                                         class="guided-side-button guided-next-button"
-                                        aria_label=move || session.get().map(|current| {
-                                            if current.is_last_step() {
-                                                copy.get().guided_finish_label
-                                            } else {
-                                                copy.get().guided_next_label
-                                            }
-                                        }).unwrap_or("")
+                                        aria_label=move || next_control_label(copy.get(), session.get())
+                                        title=TextProp::from(move || next_control_label(copy.get(), session.get()))
                                         on_click=move |_| {
                                             update_session(session, RosarySession::next);
-                                            focus_step_heading(step_heading);
                                         }
                                     >
-                                        <span aria-hidden="true">"→"</span>
+                                        <Show
+                                            when=move || session.get().is_some_and(RosarySession::is_last_step)
+                                            fallback=|| view! {
+                                                <svg class="guided-control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="m9 18 6-6-6-6" />
+                                                </svg>
+                                            }
+                                        >
+                                            <svg class="guided-control-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="m5 12 4 4L19 6" />
+                                            </svg>
+                                        </Show>
+                                        <span class="guided-control-label">
+                                            {move || next_control_label(copy.get(), session.get())}
+                                        </span>
                                     </AppButton>
                                 </div>
                             </div>
                         }
                     >
                         <div class="guided-completion">
+                            <h4
+                                id="guided-step-heading"
+                                node_ref=step_heading
+                                tabindex="-1"
+                            >
+                                {move || copy.get().guided_completion_title}
+                            </h4>
                             <p>{move || copy.get().guided_completion_message}</p>
+                            <AppButton
+                                variant=ButtonVariant::Primary
+                                aria_label=move || copy.get().guided_restart_label
+                                on_click=move |_| {
+                                    update_session(session, RosarySession::reset);
+                                }
+                            >
+                                {move || copy.get().guided_restart_label}
+                            </AppButton>
                             <section
                                 class="post-rosary-prayers"
                                 aria-labelledby="post-rosary-prayers-title"
@@ -196,6 +232,7 @@ pub fn GuidedPrayer(
     }
 }
 
+/// Applies a mutation to the active session when one is open.
 fn update_session(
     session: RwSignal<Option<RosarySession>>,
     update: impl FnOnce(&mut RosarySession),
@@ -207,39 +244,70 @@ fn update_session(
     });
 }
 
+/// Focuses the current step heading without moving the surrounding page.
 fn focus_step_heading(step_heading: NodeRef<html::H4>) {
     if let Some(heading) = step_heading.get() {
-        let _ = heading.focus();
+        let options = web_sys::FocusOptions::new();
+        options.set_prevent_scroll(true);
+        let _ = heading.focus_with_options(&options);
     }
 }
 
+/// Restores the internally scrollable prayer panel to its origin.
+fn reset_step_panel_scroll(step_panel: NodeRef<html::Div>) {
+    if let Some(panel) = step_panel.get() {
+        panel.set_scroll_top(0);
+    }
+}
+
+/// Alternates equivalent animation names so each newly active step transitions once.
+fn step_transition_class(session: Option<RosarySession>) -> String {
+    let transition = session
+        .map(|current| current.step_number() % 2)
+        .unwrap_or_default();
+    format!("guided-step-panel-content guided-step-transition--{transition}")
+}
+
+/// Returns the translated label for advancing or completing the active session.
+fn next_control_label(copy: Translation, session: Option<RosarySession>) -> &'static str {
+    session
+        .map(|current| {
+            if current.is_last_step() {
+                copy.guided_finish_label
+            } else {
+                copy.guided_next_label
+            }
+        })
+        .unwrap_or("")
+}
+
+/// Formats localized full-session and decade-level progress for the polite live region.
 fn progress_text(copy: Translation, session: Option<RosarySession>) -> String {
     session
         .map(|current| {
-            format!(
+            let step_progress = format!(
                 "{} {} {} {}",
                 copy.guided_step_label,
                 current.step_number(),
                 copy.guided_of_label,
                 GUIDED_STEP_COUNT
-            )
-        })
-        .unwrap_or_default()
-}
+            );
 
-fn active_decade_text(copy: Translation, session: Option<RosarySession>) -> String {
-    session
-        .and_then(|current| {
-            let decade = current.active_decade()?;
-            let mystery = mystery_for(copy, current.selected_mystery_set(), decade)?;
-            Some(format!(
-                "{} {} {} {} · {}",
-                copy.guided_decade_label,
-                decade.number(),
-                copy.guided_of_label,
-                5,
-                mystery.title
-            ))
+            current
+                .active_decade_progress()
+                .map(|progress| {
+                    format!(
+                        "{step_progress} · {} {} {} 5 · {} {} {} {}",
+                        copy.guided_decade_label,
+                        progress.decade_number(),
+                        copy.guided_of_label,
+                        copy.guided_prayer_label,
+                        progress.prayer_number(),
+                        copy.guided_of_label,
+                        DECADE_PRAYER_COUNT,
+                    )
+                })
+                .unwrap_or(step_progress)
         })
         .unwrap_or_default()
 }
