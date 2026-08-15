@@ -1,19 +1,23 @@
 const CACHE_PREFIX = "rosary-shell-";
-const CACHE_NAME = `${CACHE_PREFIX}v1`;
+const CACHE_NAME = `${CACHE_PREFIX}v2`;
+const APP_BASE = new URL("./", self.location.href);
+const appUrl = (path) => new URL(path, APP_BASE).href;
+const PKG_PATH = new URL("pkg/", APP_BASE).pathname;
+const ICONS_PATH = new URL("icons/", APP_BASE).pathname;
 const APP_SHELL = [
-  "/",
-  "/index.html",
-  "/manifest.webmanifest",
-  "/favicon.ico",
-  "/favicon.png",
-  "/icons/rosary-192.png",
-  "/icons/rosary-512.png",
-  "/icons/rosary-maskable-192.png",
-  "/icons/rosary-maskable-512.png",
-  "/pkg/rosary.css",
-  "/pkg/rosary.js",
-  "/pkg/rosary.wasm",
-];
+  "./",
+  "index.html",
+  "manifest.webmanifest",
+  "favicon.ico",
+  "favicon.png",
+  "icons/rosary-192.png",
+  "icons/rosary-512.png",
+  "icons/rosary-maskable-192.png",
+  "icons/rosary-maskable-512.png",
+  "pkg/rosary.css",
+  "pkg/rosary.js",
+  "pkg/rosary.wasm",
+].map(appUrl);
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -58,22 +62,22 @@ self.addEventListener("fetch", (event) => {
             const copy = response.clone();
             return caches
               .open(CACHE_NAME)
-              .then((cache) => cache.put("/index.html", copy))
+              .then((cache) => cache.put(appUrl("index.html"), copy))
               .then(() => response);
           }
           return response;
         })
-        .catch(() => caches.match("/index.html")),
+        .catch(() => caches.match(appUrl("index.html"))),
     );
     return;
   }
 
   const isStaticAsset =
-    url.pathname.startsWith("/pkg/") ||
-    url.pathname.startsWith("/icons/") ||
-    url.pathname === "/manifest.webmanifest" ||
-    url.pathname === "/favicon.ico" ||
-    url.pathname === "/favicon.png";
+    url.pathname.startsWith(PKG_PATH) ||
+    url.pathname.startsWith(ICONS_PATH) ||
+    url.href === appUrl("manifest.webmanifest") ||
+    url.href === appUrl("favicon.ico") ||
+    url.href === appUrl("favicon.png");
 
   if (!isStaticAsset) {
     return;

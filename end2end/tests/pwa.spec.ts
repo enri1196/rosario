@@ -1,8 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const APP_URL = "http://127.0.0.1:3000/";
+const APP_URL = process.env.ROSARIO_APP_URL ?? "http://127.0.0.1:3000/";
+const manifestPath = new URL("manifest.webmanifest", APP_URL).pathname;
+const appleTouchIconPath = new URL("icons/rosary-192.png", APP_URL).pathname;
+const cachedIndexUrl = new URL("index.html", APP_URL).href;
 const CACHE_PREFIX = "rosary-shell-";
-const CURRENT_CACHE = `${CACHE_PREFIX}v1`;
+const CURRENT_CACHE = `${CACHE_PREFIX}v2`;
 
 async function waitForActiveWorker(page: Page): Promise<void> {
   await page.evaluate(async () => {
@@ -17,7 +20,7 @@ async function waitForActiveWorker(page: Page): Promise<void> {
   });
 }
 
-test("exposes valid install metadata, icons, and the root service worker", async ({
+test("exposes valid install metadata, icons, and the scoped service worker", async ({
   page,
   request,
 }) => {
@@ -25,11 +28,11 @@ test("exposes valid install metadata, icons, and the root service worker", async
 
   await expect(page.locator('link[rel="manifest"]')).toHaveAttribute(
     "href",
-    "/manifest.webmanifest",
+    manifestPath,
   );
   await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
     "href",
-    "/icons/rosary-192.png",
+    appleTouchIconPath,
   );
 
   const manifestResponse = await request.get(`${APP_URL}manifest.webmanifest`);
@@ -39,8 +42,8 @@ test("exposes valid install metadata, icons, and the root service worker", async
   expect(manifest).toMatchObject({
     name: "Rosary Guide · Guida al Rosario",
     short_name: "Rosario",
-    start_url: "/",
-    scope: "/",
+    start_url: "./",
+    scope: "./",
     display: "standalone",
     background_color: "#0a0d14",
     theme_color: "#0a0d14",
@@ -82,8 +85,9 @@ test("reloads offline and keeps every client-side feature usable", async ({
   await expect
     .poll(() =>
       page.evaluate(
-        async (cacheName) => (await caches.open(cacheName)).match("/index.html").then(Boolean),
-        CURRENT_CACHE,
+        async ({ cacheName, indexUrl }) =>
+          (await caches.open(cacheName)).match(indexUrl).then(Boolean),
+        { cacheName: CURRENT_CACHE, indexUrl: cachedIndexUrl },
       ),
     )
     .toBe(true);
@@ -131,8 +135,8 @@ test("activation removes superseded Rosary shell caches", async ({ page }) => {
 
   await page.evaluate(async () => {
     const registration = await navigator.serviceWorker.register(
-      "/service-worker.js?pwa-update-test=1",
-      { scope: "/" },
+      new URL("service-worker.js?pwa-update-test=1", document.baseURI),
+      { scope: new URL("./", document.baseURI).pathname },
     );
     const worker = registration.installing ?? registration.waiting ?? registration.active;
     if (worker && worker.state !== "activated") {

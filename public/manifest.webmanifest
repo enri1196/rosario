@@ -2,32 +2,32 @@
   "name": "Rosary Guide · Guida al Rosario",
   "short_name": "Rosario",
   "description": "A bilingual Italian and English Rosary prayer guide.",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0a0d14",
   "theme_color": "#0a0d14",
   "icons": [
     {
-      "src": "/icons/rosary-192.png",
+      "src": "icons/rosary-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/rosary-512.png",
+      "src": "icons/rosary-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/rosary-maskable-192.png",
+      "src": "icons/rosary-maskable-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/rosary-maskable-512.png",
+      "src": "icons/rosary-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

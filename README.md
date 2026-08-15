@@ -4,7 +4,7 @@ A responsive, bilingual Rosary guide built with [Leptos](https://leptos.dev/). T
 
 ## Structure
 
-- `app/src/components.rs` — reusable page and content components
+- `app/src/components/` — reusable page and content components
 - `app/src/i18n.rs` — typed Italian and English translations
 - `app/src/lib.rs` — application composition, language state, and theme state
 - `app/src/theme.rs` — theme resolution, root synchronization, and persistence
@@ -12,6 +12,7 @@ A responsive, bilingual Rosary guide built with [Leptos](https://leptos.dev/). T
 - `frontend` — WebAssembly entry point
 - `server` — static Axum server used by `cargo-leptos`
 - `public` — source-owned favicon, install manifest, PWA icons, and versioned service worker copied into the generated site root by `cargo-leptos`
+- `.github/workflows/pages.yml` — production build and GitHub Pages deployment
 
 ## Run locally
 
@@ -29,6 +30,22 @@ cargo leptos watch
 ```
 
 Open <http://127.0.0.1:3000>.
+
+## Release on GitHub Pages
+
+In the repository settings on GitHub, open **Pages** and select **GitHub Actions**
+as the build source. Pushes to `master` then build and deploy the static site;
+the workflow can also be started manually from the Actions tab.
+
+This repository may remain private when the owner has GitHub Pro. For a
+personal-account repository, the deployed Pages site is still public; private
+Pages access requires an organization on GitHub Enterprise Cloud.
+
+The release workflow uses GitHub's reported Pages base path, so the same build
+supports the project URL at <https://enri1196.github.io/rosario/> and a future
+custom domain. `cargo leptos build --release` remains the only asset build, and
+the server's `--generate-site` mode writes the production `index.html` without
+starting Axum.
 
 ## Install and offline use
 

@@ -155,15 +155,21 @@ the application composition and follow the data outward:
   `[data-theme="light"]`; do not add theme literals to component markup.
 - `frontend` is the WebAssembly entry package; `server` serves the generated
   Leptos site and provides the Axum fallback to `index.html`. The frontend
-  registers the root-scoped service worker only after mounting the client app.
+  registers the scope-relative service worker only after mounting the client
+  app. `ROSARIO_BASE_PATH` makes the generated shell safe below a domain root,
+  and `server --generate-site` writes that shell without starting Axum.
 - `public` owns source-controlled static assets copied into `target/site`,
   including the existing favicons, install manifest, PWA icons, and versioned
-  service worker. Increment the worker cache version when its application-shell
-  entries change; never add a second static-asset pipeline.
+  service worker. Manifest and worker URLs stay scope-relative for GitHub Pages.
+  Increment the worker cache version when its application-shell entries change;
+  never add a second static-asset pipeline.
+- `.github/workflows/pages.yml` builds the release site, generates its
+  base-path-aware `index.html`, and deploys `target/site` through GitHub Pages.
 - `end2end` contains the Playwright browser checks for initial rendering,
   language switching, theme resolution, guided prayer, private intention tag
   editing and persistence, PWA installability and offline behavior,
   accessibility, control alignment, and critical surfaces in both themes.
+  Set `ROSARIO_APP_URL` when running `pwa.spec.ts` against a staged subpath.
 
 ## Fast start for a new feature
 

@@ -10,7 +10,7 @@ pub fn hydrate() {
     register_service_worker();
 }
 
-/// Registers the root-scoped service worker without surfacing startup failures.
+/// Registers the service worker at the current static-site scope.
 #[cfg(target_arch = "wasm32")]
 fn register_service_worker() {
     use wasm_bindgen_futures::{spawn_local, JsFuture};
@@ -21,7 +21,7 @@ fn register_service_worker() {
     let registration = window
         .navigator()
         .service_worker()
-        .register("/service-worker.js");
+        .register("service-worker.js");
 
     spawn_local(async move {
         let _ = JsFuture::from(registration).await;
