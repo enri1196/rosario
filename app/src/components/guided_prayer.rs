@@ -29,13 +29,26 @@ pub fn GuidedPrayer(
                 <section class="guided-prayer" aria-labelledby="guided-prayer-title">
                     <header class="guided-prayer-header">
                         <h3 id="guided-prayer-title">{move || copy.get().guided_title}</h3>
-                        <AppButton
-                            variant=ButtonVariant::Close
-                            aria_label=move || copy.get().guided_close_label
-                            on_click=move |_| session.set(None)
-                        >
-                            <span aria-hidden="true">"×"</span>
-                        </AppButton>
+                        <div class="guided-prayer-actions">
+                            <AppButton
+                                variant=ButtonVariant::IconAccent
+                                class="guided-restart-button"
+                                aria_label=move || copy.get().guided_reset_label
+                                on_click=move |_| {
+                                    update_session(session, RosarySession::reset);
+                                    focus_step_heading(step_heading);
+                                }
+                            >
+                                <span aria-hidden="true">"↶"</span>
+                            </AppButton>
+                            <AppButton
+                                variant=ButtonVariant::Close
+                                aria_label=move || copy.get().guided_close_label
+                                on_click=move |_| session.set(None)
+                            >
+                                <span aria-hidden="true">"×"</span>
+                            </AppButton>
+                        </div>
                     </header>
 
                     <div class="guided-session-meta">
@@ -81,97 +94,78 @@ pub fn GuidedPrayer(
                         </div>
                     </Show>
 
-                    <Show when=move || session.get().is_some_and(|current| !current.is_complete())>
-                        <p class="guided-progress" aria-live="polite" aria-atomic="true">
-                            {move || progress_text(copy.get(), session.get())}
-                        </p>
-                    </Show>
-
-                    <h4
-                        id="guided-step-heading"
-                        node_ref=step_heading
-                        tabindex="-1"
-                        aria-current=move || session.get()
-                            .filter(|current| !current.is_complete())
-                            .map(|_| "step")
-                    >
-                        {move || session.get().map(|current| {
-                            if current.is_complete() {
-                                copy.get().guided_completion_title
-                            } else {
-                                step_title(copy.get(), current)
-                            }
-                        }).unwrap_or("")}
-                    </h4>
-
                     <Show
                         when=move || session.get().is_some_and(|current| current.is_complete())
                         fallback=move || view! {
-                            <div class="guided-step-content">
-                                <Show when=move || session.get().and_then(|current| current.active_decade()).is_some()>
-                                    <p class="guided-active-decade">
-                                        {move || active_decade_text(copy.get(), session.get())}
-                                    </p>
-                                </Show>
-                                <Show when=move || !step_body(copy.get(), session.get()).is_empty()>
-                                    <p class="guided-prayer-text">
-                                        {move || step_body(copy.get(), session.get())}
-                                    </p>
-                                </Show>
-                                <Show when=move || session.get().is_some_and(|current| {
-                                    matches!(current.active_step(), GuidedStep::Closing)
-                                })>
-                                    <p class="guided-closing-note">{move || copy.get().ending}</p>
-                                </Show>
+                            <div class="guided-step-layout">
+                                <div class="guided-step-control guided-step-control--previous">
+                                    <AppButton
+                                        variant=ButtonVariant::IconSecondary
+                                        class="guided-side-button guided-previous-button"
+                                        aria_label=move || copy.get().guided_previous_label
+                                        disabled=Signal::derive(move || session.get().is_none_or(|current| current.is_first_step()))
+                                        on_click=move |_| {
+                                            update_session(session, RosarySession::previous);
+                                            focus_step_heading(step_heading);
+                                        }
+                                    >
+                                        <span aria-hidden="true">"←"</span>
+                                    </AppButton>
+                                </div>
+                                <div class="guided-step-panel">
+                                    <div class="guided-step-panel-content">
+                                        <p class="guided-progress" aria-live="polite" aria-atomic="true">
+                                            {move || progress_text(copy.get(), session.get())}
+                                        </p>
+                                        <h4
+                                            id="guided-step-heading"
+                                            node_ref=step_heading
+                                            tabindex="-1"
+                                            aria-current=move || session.get()
+                                                .filter(|current| !current.is_complete())
+                                                .map(|_| "step")
+                                        >
+                                            {move || session.get().map(|current| step_title(copy.get(), current)).unwrap_or("")}
+                                        </h4>
+                                        <div class="guided-step-content">
+                                            <Show when=move || session.get().and_then(|current| current.active_decade()).is_some()>
+                                                <p class="guided-active-decade">
+                                                    {move || active_decade_text(copy.get(), session.get())}
+                                                </p>
+                                            </Show>
+                                            <Show when=move || !step_body(copy.get(), session.get()).is_empty()>
+                                                <p class="guided-prayer-text">
+                                                    {move || step_body(copy.get(), session.get())}
+                                                </p>
+                                            </Show>
+                                            <Show when=move || session.get().is_some_and(|current| {
+                                                matches!(current.active_step(), GuidedStep::Closing)
+                                            })>
+                                                <p class="guided-closing-note">{move || copy.get().ending}</p>
+                                            </Show>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="guided-step-control guided-step-control--next">
+                                    <AppButton
+                                        variant=ButtonVariant::IconPrimary
+                                        class="guided-side-button guided-next-button"
+                                        aria_label=move || session.get().map(|current| {
+                                            if current.is_last_step() {
+                                                copy.get().guided_finish_label
+                                            } else {
+                                                copy.get().guided_next_label
+                                            }
+                                        }).unwrap_or("")
+                                        on_click=move |_| {
+                                            update_session(session, RosarySession::next);
+                                            focus_step_heading(step_heading);
+                                        }
+                                    >
+                                        <span aria-hidden="true">"→"</span>
+                                    </AppButton>
+                                </div>
                             </div>
-
-                            <nav class="guided-navigation" aria-label=move || copy.get().guided_title>
-                                <AppButton
-                                    variant=ButtonVariant::Secondary
-                                    class="guided-secondary-button"
-                                    aria_label=move || copy.get().guided_previous_label
-                                    disabled=Signal::derive(move || session.get().is_none_or(|current| current.is_first_step()))
-                                    on_click=move |_| {
-                                        update_session(session, RosarySession::previous);
-                                        focus_step_heading(step_heading);
-                                    }
-                                >
-                                    {move || copy.get().guided_previous_label}
-                                </AppButton>
-                                <AppButton
-                                    variant=ButtonVariant::Secondary
-                                    class="guided-secondary-button"
-                                    aria_label=move || copy.get().guided_reset_label
-                                    on_click=move |_| {
-                                        update_session(session, RosarySession::reset);
-                                        focus_step_heading(step_heading);
-                                    }
-                                >
-                                    {move || copy.get().guided_reset_label}
-                                </AppButton>
-                                <AppButton
-                                    class="guided-primary-button"
-                                    aria_label=move || session.get().map(|current| {
-                                        if current.is_last_step() {
-                                            copy.get().guided_finish_label
-                                        } else {
-                                            copy.get().guided_next_label
-                                        }
-                                    }).unwrap_or("")
-                                    on_click=move |_| {
-                                        update_session(session, RosarySession::next);
-                                        focus_step_heading(step_heading);
-                                    }
-                                >
-                                    {move || session.get().map(|current| {
-                                        if current.is_last_step() {
-                                            copy.get().guided_finish_label
-                                        } else {
-                                            copy.get().guided_next_label
-                                        }
-                                    }).unwrap_or("")}
-                                </AppButton>
-                            </nav>
                         }
                     >
                         <div class="guided-completion">
@@ -194,16 +188,6 @@ pub fn GuidedPrayer(
                                     }
                                 />
                             </section>
-                            <AppButton
-                                class="guided-primary-button"
-                                aria_label=move || copy.get().guided_restart_label
-                                on_click=move |_| {
-                                    update_session(session, RosarySession::reset);
-                                    focus_step_heading(step_heading);
-                                }
-                            >
-                                {move || copy.get().guided_restart_label}
-                            </AppButton>
                         </div>
                     </Show>
                 </section>

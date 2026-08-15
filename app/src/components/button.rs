@@ -5,7 +5,6 @@ use leptos::{ev::MouseEvent, prelude::*};
 pub enum ButtonVariant {
     #[default]
     Primary,
-    Secondary,
     IconPrimary,
     IconSecondary,
     IconAccent,
@@ -16,7 +15,6 @@ impl ButtonVariant {
     const fn class_name(self) -> &'static str {
         match self {
             Self::Primary => "app-button--primary",
-            Self::Secondary => "app-button--secondary",
             Self::IconPrimary => "app-button--icon-primary",
             Self::IconSecondary => "app-button--icon-secondary",
             Self::IconAccent => "app-button--icon-accent",

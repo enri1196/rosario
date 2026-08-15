@@ -33,6 +33,18 @@ test("opens from the guide and supports keyboard navigation, reset, and close", 
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 1 di 31");
   await expect(guided.getByRole("button", { name: "Indietro" })).toBeDisabled();
   await expect(guided.getByRole("button", { name: "Avanti" })).toBeEnabled();
+  await expect(guided.locator(".guided-step-panel")).toHaveCSS("text-align", "center");
+
+  const [previousBox, panelBox, nextBox] = await Promise.all([
+    guided.getByRole("button", { name: "Indietro" }).boundingBox(),
+    guided.locator(".guided-step-panel").boundingBox(),
+    guided.getByRole("button", { name: "Avanti" }).boundingBox(),
+  ]);
+  expect(previousBox).not.toBeNull();
+  expect(panelBox).not.toBeNull();
+  expect(nextBox).not.toBeNull();
+  expect(previousBox!.y + previousBox!.height / 2).toBeCloseTo(panelBox!.y + panelBox!.height / 2, 0);
+  expect(nextBox!.y + nextBox!.height / 2).toBeCloseTo(panelBox!.y + panelBox!.height / 2, 0);
 
   await guided.getByRole("button", { name: "Avanti" }).click();
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Credo degli Apostoli");
@@ -43,7 +55,7 @@ test("opens from the guide and supports keyboard navigation, reset, and close", 
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 1 di 31");
   await guided.getByRole("button", { name: "Avanti" }).click();
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 2 di 31");
-  await guided.getByRole("button", { name: "Ricomincia" }).click();
+  await guided.locator(".guided-restart-button").click();
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 1 di 31");
 
   await guided.getByRole("button", { name: "Chiudi il Rosario guidato" }).click();
@@ -107,19 +119,19 @@ test("progresses through decades to completion and restarts", async ({ page }) =
 
   const guided = guidedPrayer(page);
   for (let index = 0; index < 5; index += 1) {
-    await guided.locator(".guided-primary-button").click();
+    await guided.locator(".guided-next-button").click();
   }
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 6 di 31");
   await expect(guided.locator(".guided-active-decade")).toContainText("Decina 1 di 5");
 
   for (let index = 0; index < 5; index += 1) {
-    await guided.locator(".guided-primary-button").click();
+    await guided.locator(".guided-next-button").click();
   }
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 11 di 31");
   await expect(guided.locator(".guided-active-decade")).toContainText("Decina 2 di 5");
 
   for (let index = 0; index < 21; index += 1) {
-    await guided.locator(".guided-primary-button").click();
+    await guided.locator(".guided-next-button").click();
   }
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Rosario completato");
   await expect(guided).toContainText("Hai completato il Rosario");
@@ -132,7 +144,7 @@ test("progresses through decades to completion and restarts", async ({ page }) =
   await expect(guided).toContainText("Angelo di Dio");
   await expect(guided).toContainText("Nel nome del Padre e del Figlio");
 
-  await guided.getByRole("button", { name: "Prega di nuovo" }).click();
+  await guided.getByRole("button", { name: "Ricomincia" }).click();
   await expect(guided.locator(".guided-progress")).toHaveText("Passo 1 di 31");
   await expect(guided.getByRole("button", { name: "Indietro" })).toBeDisabled();
 });
