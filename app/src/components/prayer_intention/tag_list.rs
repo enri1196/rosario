@@ -128,6 +128,7 @@ fn SavedIntentionTag(
     }
 }
 
+/// Renders the inline draft field and its embedded live character count.
 #[component]
 fn DraftIntentionTag(
     copy: Memo<Translation>,
@@ -138,36 +139,54 @@ fn DraftIntentionTag(
 ) -> impl IntoView {
     view! {
         <li class="intention-draft-tag">
-            <input
-                id="prayer-intention-text"
-                class="intention-tag-input"
-                node_ref=draft_input
-                type="text"
-                autocomplete="off"
-                aria-label=move || copy.get().intention_label
-                prop:value=move || draft.get().unwrap_or_default()
-                aria-describedby="prayer-intention-help prayer-intention-character-count prayer-intention-feedback"
-                aria-invalid=move || feedback.get().is_some_and(IntentionFeedback::is_error).to_string()
-                on:input=move |event| {
-                    let value = event_target_value(&event);
-                    let is_too_long = value.chars().count() > INTENTION_MAX_CHARS;
-                    draft.set(Some(value));
-                    feedback.set(is_too_long.then_some(IntentionFeedback::TooLong));
-                }
-                on:blur=move |_| confirm_draft(intentions, draft, feedback)
-                on:keydown=move |event| match event.key().as_str() {
-                    "Enter" => {
-                        event.prevent_default();
-                        confirm_draft(intentions, draft, feedback);
+            <div class="intention-draft-field">
+                <input
+                    id="prayer-intention-text"
+                    class="intention-tag-input"
+                    node_ref=draft_input
+                    type="text"
+                    autocomplete="off"
+                    aria-label=move || copy.get().intention_label
+                    prop:value=move || draft.get().unwrap_or_default()
+                    aria-describedby="prayer-intention-help prayer-intention-character-count prayer-intention-feedback"
+                    aria-invalid=move || feedback.get().is_some_and(IntentionFeedback::is_error).to_string()
+                    on:input=move |event| {
+                        let value = event_target_value(&event);
+                        let is_too_long = value.chars().count() > INTENTION_MAX_CHARS;
+                        draft.set(Some(value));
+                        feedback.set(is_too_long.then_some(IntentionFeedback::TooLong));
                     }
-                    "Escape" => {
-                        event.prevent_default();
-                        draft.set(None);
-                        feedback.set(None);
+                    on:blur=move |_| confirm_draft(intentions, draft, feedback)
+                    on:keydown=move |event| match event.key().as_str() {
+                        "Enter" => {
+                            event.prevent_default();
+                            confirm_draft(intentions, draft, feedback);
+                        }
+                        "Escape" => {
+                            event.prevent_default();
+                            draft.set(None);
+                            feedback.set(None);
+                        }
+                        _ => {}
                     }
-                    _ => {}
-                }
-            />
+                />
+                <span
+                    id="prayer-intention-character-count"
+                    class="intention-character-count"
+                    aria-label=move || format!(
+                        "{}: {}/{}",
+                        copy.get().intention_character_count_label,
+                        draft.get().map_or(0, |value| value.chars().count()),
+                        INTENTION_MAX_CHARS,
+                    )
+                >
+                    {move || format!(
+                        "{}/{}",
+                        draft.get().map_or(0, |value| value.chars().count()),
+                        INTENTION_MAX_CHARS,
+                    )}
+                </span>
+            </div>
         </li>
     }
 }

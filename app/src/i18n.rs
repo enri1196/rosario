@@ -131,6 +131,7 @@ impl MysterySet {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
+/// All localized copy and content rendered by the application.
 pub struct Translation {
     pub page_title: &'static str,
     pub heading: &'static str,
@@ -139,6 +140,10 @@ pub struct Translation {
     pub dark_theme_label: &'static str,
     pub light_theme_label: &'static str,
     pub skip_link: &'static str,
+    pub workspace_navigation_label: &'static str,
+    pub guide_section_label: &'static str,
+    pub mysteries_section_label: &'static str,
+    pub prayers_section_label: &'static str,
     pub prayers_heading: &'static str,
     pub prayers: &'static [Prayer; 5],
     pub sidebar_prayers: &'static [Prayer; 7],
@@ -191,13 +196,9 @@ pub struct Translation {
     pub intention_delete_label: &'static str,
     pub intention_count_label: &'static str,
     pub intention_character_count_label: &'static str,
-    pub intention_empty_state: &'static str,
     pub intention_too_long_error: &'static str,
     pub intention_too_many_error: &'static str,
     pub intention_duplicate_error: &'static str,
-    pub intention_added_status: &'static str,
-    pub intention_removed_status: &'static str,
-    pub intention_reordered_status: &'static str,
     pub intention_storage_error: &'static str,
     pub mysteries_heading: &'static str,
     pub groups: &'static [MysteryGroup; 4],
@@ -218,7 +219,7 @@ const IT_PRAYERS: [Prayer; 5] = [
     Prayer { title: "Padre Nostro", text: "Padre nostro, che sei nei cieli,\nsia santificato il tuo nome;\nvenga il tuo regno;\nsia fatta la tua volontà,\ncome in cielo così in terra.\nDacci oggi il nostro pane quotidiano,\ne rimetti a noi i nostri debiti\ncome noi li rimettiamo ai nostri debitori,\ne non ci indurre in tentazione,\nma liberaci dal male. Amen." },
     Prayer { title: "Ave Maria", text: "Ave Maria, piena di grazia,\nil Signore è con te.\nTu sei benedetta fra le donne\ne benedetto è il frutto del tuo seno, Gesù.\nSanta Maria, Madre di Dio,\nprega per noi peccatori,\nadesso e nell'ora della nostra morte. Amen." },
     Prayer { title: "Gloria al Padre", text: "Gloria al Padre, al Figlio\ne allo Spirito Santo.\nCome era nel principio,\nora e sempre,\nnei secoli dei secoli. Amen." },
-    Prayer { title: "O Mio Gesù", text: "O Gesù mio, perdona i nostri peccati,\npreservaci dal fuoco dell'inferno,\nporta in cielo tutte le anime,\nspecialmente le più bisognose\ndella tua misericordia. Amen." },
+    Prayer { title: "Preghiera di Fatima", text: "O Gesù mio, perdona i nostri peccati,\npreservaci dal fuoco dell'inferno,\nporta in cielo tutte le anime,\nspecialmente le più bisognose\ndella tua misericordia. Amen." },
     Prayer { title: "Salve Regina", text: "Salve, Regina, madre di misericordia,\nvita, dolcezza e speranza nostra, salve.\nA te ricorriamo, esuli figli di Eva;\na te sospiriamo gementi e piangenti\nin questa valle di lacrime.\nOrsù dunque, avvocata nostra,\nrivolgi a noi gli occhi tuoi misericordiosi.\nE mostraci, dopo questo esilio,\nGesù, il frutto benedetto del tuo seno.\nO clemente, o pia, o dolce Vergine Maria.\nPrega per noi, santa Madre di Dio,\nperché siamo degni delle promesse di Cristo." },
 ];
 
@@ -226,7 +227,7 @@ const EN_PRAYERS: [Prayer; 5] = [
     Prayer { title: "Our Father", text: "Our Father, who art in heaven,\nhallowed be thy name;\nthy kingdom come; thy will be done\non earth as it is in heaven.\nGive us this day our daily bread,\nand forgive us our trespasses,\nas we forgive those who trespass against us;\nand lead us not into temptation,\nbut deliver us from evil. Amen." },
     Prayer { title: "Hail Mary", text: "Hail Mary, full of grace,\nthe Lord is with thee.\nBlessed art thou among women,\nand blessed is the fruit of thy womb, Jesus.\nHoly Mary, Mother of God,\npray for us sinners,\nnow and at the hour of our death. Amen." },
     Prayer { title: "Glory Be", text: "Glory be to the Father, and to the Son,\nand to the Holy Spirit.\nAs it was in the beginning,\nis now, and ever shall be,\nworld without end. Amen." },
-    Prayer { title: "O My Jesus", text: "O my Jesus, forgive us our sins,\nsave us from the fires of hell,\nlead all souls to Heaven,\nespecially those most in need\nof thy mercy. Amen." },
+    Prayer { title: "Fatima Prayer", text: "O my Jesus, forgive us our sins,\nsave us from the fires of hell,\nlead all souls to Heaven,\nespecially those most in need\nof thy mercy. Amen." },
     Prayer { title: "Hail, Holy Queen", text: "Hail, holy Queen, Mother of mercy,\nour life, our sweetness and our hope.\nTo thee do we cry, poor banished children of Eve;\nto thee do we send up our sighs,\nmourning and weeping in this valley of tears.\nTurn then, most gracious advocate,\nthine eyes of mercy toward us;\nand after this our exile show unto us\nthe blessed fruit of thy womb, Jesus.\nO clement, O loving, O sweet Virgin Mary.\nPray for us, O holy Mother of God,\nthat we may be made worthy of Christ's promises." },
 ];
 
@@ -384,7 +385,7 @@ const EN_GROUPS: [MysteryGroup; 4] = [
 ];
 
 pub const IT: Translation = Translation {
-    page_title: "Guida al Rosario", heading: "Guida al Rosario", language_label: "Lingua", theme_control_label: "Tema", dark_theme_label: "Passa al tema scuro", light_theme_label: "Passa al tema chiaro", skip_link: "Vai al contenuto", prayers_heading: "Preghiere del Rosario", prayers: &IT_PRAYERS, sidebar_prayers: &IT_SIDEBAR_PRAYERS,
+    page_title: "Guida al Rosario", heading: "Guida al Rosario", language_label: "Lingua", theme_control_label: "Tema", dark_theme_label: "Passa al tema scuro", light_theme_label: "Passa al tema chiaro", skip_link: "Vai al contenuto", workspace_navigation_label: "Sezioni dell'applicazione", guide_section_label: "Guida", mysteries_section_label: "Misteri", prayers_section_label: "Preghiere", prayers_heading: "Preghiere del Rosario", prayers: &IT_PRAYERS, sidebar_prayers: &IT_SIDEBAR_PRAYERS,
     mystery_recommendation_title: "Misteri consigliati", mystery_recommendation_pray_label: "Misteri da pregare",
     mystery_recommendation_date_label: "Scegli una data (YYYY-MM-DD)", mystery_recommendation_date_help: "Usa il formato YYYY-MM-DD per esplorare i Misteri consigliati per un altro giorno.", mystery_recommendation_today_label: "Oggi", mystery_recommendation_selected_date_label: "Data selezionata", mystery_recommendation_reason_label: "Perché", mystery_recommendation_invalid_date: "Inserisci una data valida nel formato YYYY-MM-DD: la raccomandazione precedente non è stata modificata.",
     mystery_recommendation_basis: RecommendationBasisDescriptions { weekday: "La raccomandazione segue il giorno della settimana.", advent: "Nel tempo di Avvento si contemplano i Misteri Gaudiosi.", christmas_period: "Nel tempo di Natale si contemplano i Misteri Gaudiosi.", lent: "Nel tempo di Quaresima si contemplano i Misteri Dolorosi.", easter_season: "Nel tempo di Pasqua si contemplano i Misteri Gloriosi.", feast_override: "La celebrazione liturgica di questo giorno determina i Misteri consigliati." },
@@ -393,12 +394,12 @@ pub const IT: Translation = Translation {
     steps: &["Segno della Croce", "Credo degli Apostoli", "Padre Nostro", "Tre Ave Maria", "Gloria al Padre", "O Mio Gesù", "Intenzione", "Annunciare e meditare il Mistero", "Ripetere per cinque decine"],
     ending_title: "Al termine", ending: "Salve Regina · Preghiera personale · Segno della Croce", decade_note: "Per ogni decina: annuncia il Mistero e meditalo mentre reciti un Padre Nostro, dieci Ave Maria, il Gloria e O Mio Gesù.",
     guided_start_label: "Avvia il Rosario guidato", guided_title: "Rosario guidato", guided_close_label: "Chiudi il Rosario guidato", guided_step_label: "Passo", guided_of_label: "di", guided_mystery_set_label: "Misteri scelti", guided_selected_mystery_label: "Mistero scelto", guided_decade_label: "Decina", guided_prayer_label: "Preghiera", guided_ten_hail_marys_label: "Dieci Ave Maria", guided_previous_label: "Indietro", guided_next_label: "Avanti", guided_reset_label: "Ricomincia", guided_finish_label: "Completa il Rosario", guided_restart_label: "Prega di nuovo", guided_completion_title: "Rosario completato", guided_completion_message: "Hai completato il Rosario. Prenditi un momento di silenzio prima di continuare.", post_rosary_prayers_title: "Preghiere facoltative dopo il Rosario", post_rosary_prayers: &IT_POST_ROSARY_PRAYERS, guided_pray_mystery_label: "Prega questo Mistero", guided_intention_label: "Intenzioni affidate",
-    intention_title: "Intenzioni di preghiera", intention_label: "Nuova intenzione", intention_help: "Usa + per creare un'etichetta, poi premi Invio o fai clic altrove per confermarla. Rimane privata in questo browser; trascinala o usa i tasti freccia per riordinarla.", intention_add_label: "Aggiungi intenzione", intention_list_label: "Intenzioni salvate", intention_item_label: "Intenzione", intention_reorder_label: "Trascina per riordinare o usa i tasti freccia", intention_delete_label: "Elimina intenzione", intention_count_label: "Intenzioni", intention_character_count_label: "Caratteri", intention_empty_state: "Nessuna intenzione aggiunta.", intention_too_long_error: "Ogni intenzione non può superare 50 caratteri.", intention_too_many_error: "Puoi aggiungere al massimo 50 intenzioni.", intention_duplicate_error: "Questa intenzione è già presente.", intention_added_status: "Intenzione aggiunta.", intention_removed_status: "Intenzione eliminata.", intention_reordered_status: "Ordine delle intenzioni aggiornato.", intention_storage_error: "La modifica è attiva in questa pagina, ma il browser non ha permesso di salvarla.",
+    intention_title: "Intenzioni di preghiera", intention_label: "Nuova intenzione", intention_help: "Usa + per creare un'etichetta, poi premi Invio o fai clic altrove per confermarla. Rimane privata in questo browser; trascinala o usa i tasti freccia per riordinarla.", intention_add_label: "Aggiungi intenzione", intention_list_label: "Intenzioni salvate", intention_item_label: "Intenzione", intention_reorder_label: "Trascina per riordinare o usa i tasti freccia", intention_delete_label: "Elimina intenzione", intention_count_label: "Intenzioni", intention_character_count_label: "Caratteri", intention_too_long_error: "Ogni intenzione non può superare 50 caratteri.", intention_too_many_error: "Puoi aggiungere al massimo 50 intenzioni.", intention_duplicate_error: "Questa intenzione è già presente.", intention_storage_error: "La modifica è attiva in questa pagina, ma il browser non ha permesso di salvarla.",
     mysteries_heading: "I venti Misteri", groups: &IT_GROUPS, fruit_label: "Frutto del Mistero", version: "Versione italiana",
 };
 
 pub const EN: Translation = Translation {
-    page_title: "Guide to the Rosary", heading: "Guide to the Rosary", language_label: "Language", theme_control_label: "Theme", dark_theme_label: "Switch to dark theme", light_theme_label: "Switch to light theme", skip_link: "Skip to content", prayers_heading: "Prayers of the Rosary", prayers: &EN_PRAYERS, sidebar_prayers: &EN_SIDEBAR_PRAYERS,
+    page_title: "Guide to the Rosary", heading: "Guide to the Rosary", language_label: "Language", theme_control_label: "Theme", dark_theme_label: "Switch to dark theme", light_theme_label: "Switch to light theme", skip_link: "Skip to content", workspace_navigation_label: "Application sections", guide_section_label: "Guide", mysteries_section_label: "Mysteries", prayers_section_label: "Prayers", prayers_heading: "Prayers of the Rosary", prayers: &EN_PRAYERS, sidebar_prayers: &EN_SIDEBAR_PRAYERS,
     mystery_recommendation_title: "Recommended Mysteries", mystery_recommendation_pray_label: "Mysteries to pray",
     mystery_recommendation_date_label: "Choose a date (YYYY-MM-DD)", mystery_recommendation_date_help: "Use YYYY-MM-DD to explore the Mysteries recommended for another day.", mystery_recommendation_today_label: "Today", mystery_recommendation_selected_date_label: "Selected date", mystery_recommendation_reason_label: "Why", mystery_recommendation_invalid_date: "Enter a valid date in YYYY-MM-DD format; the previous recommendation has not changed.",
     mystery_recommendation_basis: RecommendationBasisDescriptions { weekday: "The recommendation follows the day of the week.", advent: "During Advent, the Joyful Mysteries are contemplated.", christmas_period: "During the Christmas season, the Joyful Mysteries are contemplated.", lent: "During Lent, the Sorrowful Mysteries are contemplated.", easter_season: "During the Easter season, the Glorious Mysteries are contemplated.", feast_override: "The liturgical celebration on this date determines the recommended Mysteries." },
@@ -407,7 +408,7 @@ pub const EN: Translation = Translation {
     steps: &["Sign of the Cross", "Apostles' Creed", "Our Father", "Three Hail Marys", "Glory Be", "O My Jesus", "Prayer intention", "Announce and meditate on the Mystery", "Repeat for five decades"],
     ending_title: "To conclude", ending: "Hail, Holy Queen · Personal prayer · Sign of the Cross", decade_note: "For each decade: announce the Mystery and meditate on it while praying one Our Father, ten Hail Marys, the Glory Be and O My Jesus.",
     guided_start_label: "Start guided Rosary", guided_title: "Guided Rosary", guided_close_label: "Close guided Rosary", guided_step_label: "Step", guided_of_label: "of", guided_mystery_set_label: "Selected Mysteries", guided_selected_mystery_label: "Selected Mystery", guided_decade_label: "Decade", guided_prayer_label: "Prayer", guided_ten_hail_marys_label: "Ten Hail Marys", guided_previous_label: "Previous", guided_next_label: "Next", guided_reset_label: "Reset", guided_finish_label: "Complete the Rosary", guided_restart_label: "Pray again", guided_completion_title: "Rosary complete", guided_completion_message: "You have completed the Rosary. Take a moment of silence before continuing.", post_rosary_prayers_title: "Optional prayers after the Rosary", post_rosary_prayers: &EN_POST_ROSARY_PRAYERS, guided_pray_mystery_label: "Pray this Mystery", guided_intention_label: "Prayer intentions",
-    intention_title: "Prayer intentions", intention_label: "New intention", intention_help: "Use + to create a tag, then press Enter or click elsewhere to confirm it. It stays private in this browser; drag it or use the arrow keys to reorder it.", intention_add_label: "Add intention", intention_list_label: "Saved intentions", intention_item_label: "Intention", intention_reorder_label: "Drag to reorder or use the arrow keys", intention_delete_label: "Delete intention", intention_count_label: "Intentions", intention_character_count_label: "Characters", intention_empty_state: "No intentions added.", intention_too_long_error: "Each intention cannot exceed 50 characters.", intention_too_many_error: "You can add at most 50 intentions.", intention_duplicate_error: "This intention has already been added.", intention_added_status: "Intention added.", intention_removed_status: "Intention deleted.", intention_reordered_status: "Intention order updated.", intention_storage_error: "The change is active on this page, but the browser did not allow it to be saved.",
+    intention_title: "Prayer intentions", intention_label: "New intention", intention_help: "Use + to create a tag, then press Enter or click elsewhere to confirm it. It stays private in this browser; drag it or use the arrow keys to reorder it.", intention_add_label: "Add intention", intention_list_label: "Saved intentions", intention_item_label: "Intention", intention_reorder_label: "Drag to reorder or use the arrow keys", intention_delete_label: "Delete intention", intention_count_label: "Intentions", intention_character_count_label: "Characters", intention_too_long_error: "Each intention cannot exceed 50 characters.", intention_too_many_error: "You can add at most 50 intentions.", intention_duplicate_error: "This intention has already been added.", intention_storage_error: "The change is active on this page, but the browser did not allow it to be saved.",
     mysteries_heading: "The twenty Mysteries", groups: &EN_GROUPS, fruit_label: "Fruit of the Mystery", version: "English version",
 };
 

@@ -76,29 +76,30 @@ test("opens from the guide and supports keyboard navigation, reset, and close", 
   await expect(page.getByRole("heading", { name: "Come recitare il Rosario" })).toBeVisible();
 });
 
-test("lists the Creed first and Eternal Rest last in the prayer sidebar", async ({ page }) => {
+test("lists the Creed first and Eternal Rest last in the Prayers view", async ({ page }) => {
   await page.goto(APP_URL);
 
-  const prayers = page.getByRole("complementary", { name: "Preghiere del Rosario" });
+  await page.getByRole("tab", { name: "Preghiere" }).click();
+  const prayers = page.getByRole("tabpanel", { name: "Preghiere" });
   await expect(prayers.getByRole("heading", { level: 3 })).toHaveText([
     "Credo degli Apostoli",
     "Padre Nostro",
     "Ave Maria",
     "Gloria al Padre",
-    "O Mio Gesù",
+    "Preghiera di Fatima",
     "Salve Regina",
     "L'Eterno Riposo",
   ]);
   await expect(prayers).toContainText("L'eterno riposo dona loro, o Signore");
 
   await page.getByLabel("Lingua").selectOption("en");
-  const englishPrayers = page.getByRole("complementary", { name: "Prayers of the Rosary" });
+  const englishPrayers = page.getByRole("tabpanel", { name: "Prayers" });
   await expect(englishPrayers.getByRole("heading", { level: 3 })).toHaveText([
     "The Apostles' Creed",
     "Our Father",
     "Hail Mary",
     "Glory Be",
-    "O My Jesus",
+    "Fatima Prayer",
     "Hail, Holy Queen",
     "Eternal Rest",
   ]);
@@ -107,6 +108,7 @@ test("lists the Creed first and Eternal Rest last in the prayer sidebar", async 
 
 test("opens the shared session for a specific mystery card", async ({ page }) => {
   await page.goto(APP_URL);
+  await page.getByRole("tab", { name: "Misteri" }).click();
 
   const nativityCard = page.locator(".mystery-card").filter({
     has: page.getByRole("heading", { name: "La Natività" }),
@@ -119,7 +121,9 @@ test("opens the shared session for a specific mystery card", async ({ page }) =>
   await prayMystery.click();
 
   const guided = guidedPrayer(page);
+  await expect(page.getByRole("tab", { name: "Guida" })).toHaveAttribute("aria-selected", "true");
   await expect(guided).toBeVisible();
+  await expect(page.locator(".rosary-wrap, .mystery-recommendation, .steps-legend")).toHaveCount(0);
   await expect(guided.locator(".guided-selected-mystery")).toContainText("La Natività");
   await expect(guided).toContainText("Misteri Gaudiosi");
   await expect(guided.getByRole("heading", { level: 4 })).toHaveText("Segno della Croce");
@@ -180,6 +184,18 @@ test("reports decade progress, completes, and restarts from the primary action",
 test("uses a full-width mobile panel and labeled bottom controls without overflow", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 620 });
   await page.goto(APP_URL);
+
+  const wrapBox = await page.locator(".rosary-wrap").boundingBox();
+  const diagramBox = await page.locator(".rosary").boundingBox();
+  const startBox = await page.getByRole("button", { name: "Avvia il Rosario guidato" }).boundingBox();
+  expect(wrapBox).not.toBeNull();
+  expect(diagramBox).not.toBeNull();
+  expect(startBox).not.toBeNull();
+  expect(diagramBox!.width).toBeGreaterThan(400);
+  expect(diagramBox!.width).toBeCloseTo(wrapBox!.width, 0);
+  expect(diagramBox!.x + diagramBox!.width / 2).toBeCloseTo(wrapBox!.x + wrapBox!.width / 2, 0);
+  expect(startBox!.width).toBeLessThan(diagramBox!.width / 2);
+
   await page.getByRole("button", { name: "Avvia il Rosario guidato" }).click();
 
   const guided = guidedPrayer(page);

@@ -7,6 +7,7 @@ use self::state::{focus_draft_input, focus_intention_at, IntentionFeedback};
 use self::tag_list::IntentionTagList;
 use super::GuideBox;
 use crate::i18n::Translation;
+use crate::intentions::INTENTIONS_MAX_COUNT;
 use leptos::{html, prelude::*};
 use std::cell::Cell;
 
@@ -47,8 +48,21 @@ pub fn PrayerIntention(
     view! {
         <GuideBox>
             <section class="prayer-intention" aria-labelledby="prayer-intention-title">
-                <h3 id="prayer-intention-title">{move || copy.get().intention_title}</h3>
-                <IntentionMeta copy intentions draft />
+                <header class="intention-heading-row">
+                    <h3 id="prayer-intention-title">{move || copy.get().intention_title}</h3>
+                    <span
+                        class="intention-count intention-total-count"
+                        aria-label=move || format!(
+                            "{}: {}/{}",
+                            copy.get().intention_count_label,
+                            intentions.get().len(),
+                            INTENTIONS_MAX_COUNT,
+                        )
+                    >
+                        {move || format!("{}/{}", intentions.get().len(), INTENTIONS_MAX_COUNT)}
+                    </span>
+                </header>
+                <IntentionMeta copy />
                 <IntentionTagList
                     copy
                     intentions
@@ -58,10 +72,6 @@ pub fn PrayerIntention(
                     focus_after_reorder
                     draft_input
                 />
-
-                <Show when=move || intentions.get().is_empty() && draft.get().is_none()>
-                    <p class="intention-empty-state">{move || copy.get().intention_empty_state}</p>
-                </Show>
 
                 <IntentionFeedbackMessage copy feedback />
             </section>

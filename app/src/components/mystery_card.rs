@@ -1,8 +1,9 @@
 use super::AppButton;
 use crate::i18n::{Mystery, MysterySet};
-use crate::rosary_session::{Decade, RosarySession};
+use crate::rosary_session::Decade;
 use leptos::prelude::*;
 
+/// Renders one mystery and delegates guided-session opening to the root owner.
 #[component]
 pub(super) fn MysteryCard(
     mystery: Mystery,
@@ -10,7 +11,7 @@ pub(super) fn MysteryCard(
     decade: Decade,
     fruit_label: &'static str,
     pray_label: &'static str,
-    guided_session: RwSignal<Option<RosarySession>>,
+    open_guided: Callback<(MysterySet, Decade)>,
 ) -> impl IntoView {
     view! {
         <article class="mystery-card">
@@ -22,10 +23,7 @@ pub(super) fn MysteryCard(
                 class="mystery-pray-button"
                 aria_label=format!("{pray_label}: {}", mystery.title)
                 on_click=move |_| {
-                    guided_session.set(Some(RosarySession::start_for_mystery(
-                        mystery_set,
-                        decade,
-                    )));
+                    open_guided.run((mystery_set, decade));
                 }
             >
                 {pray_label}

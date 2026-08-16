@@ -1,4 +1,7 @@
-use leptos::{ev::MouseEvent, prelude::*};
+use leptos::{
+    ev::{KeyboardEvent, MouseEvent},
+    prelude::*,
+};
 
 /// Visual treatments supported by the shared application button control.
 #[derive(Clone, Copy, Default)]
@@ -9,6 +12,7 @@ pub enum ButtonVariant {
     IconSecondary,
     IconAccent,
     Close,
+    Tab,
 }
 
 impl ButtonVariant {
@@ -19,6 +23,7 @@ impl ButtonVariant {
             Self::IconSecondary => "app-button--icon-secondary",
             Self::IconAccent => "app-button--icon-accent",
             Self::Close => "app-button--close",
+            Self::Tab => "app-button--tab",
         }
     }
 }
@@ -32,9 +37,15 @@ pub fn AppButton(
     #[prop(optional)] variant: ButtonVariant,
     #[prop(optional, into)] class: String,
     #[prop(into)] aria_label: TextProp,
+    #[prop(optional)] id: Option<&'static str>,
+    #[prop(optional)] role: Option<&'static str>,
+    #[prop(optional)] aria_controls: Option<&'static str>,
     #[prop(optional)] aria_pressed: Option<Signal<bool>>,
+    #[prop(optional)] aria_selected: Option<Signal<bool>>,
     #[prop(optional)] title: Option<TextProp>,
     #[prop(optional)] disabled: Option<Signal<bool>>,
+    #[prop(optional)] tab_index: Option<Signal<i32>>,
+    #[prop(optional)] on_keydown: Option<Callback<KeyboardEvent>>,
     on_click: impl Fn(MouseEvent) + 'static,
     children: Children,
 ) -> impl IntoView {
@@ -44,11 +55,21 @@ pub fn AppButton(
         <button
             type="button"
             class=class
+            id=id
+            role=role
             aria-label=aria_label
+            aria-controls=aria_controls
             aria-pressed=move || aria_pressed.as_ref().map(|pressed| pressed.get().to_string())
+            aria-selected=move || aria_selected.as_ref().map(|selected| selected.get().to_string())
             title=move || title.as_ref().map(TextProp::get)
             disabled=move || disabled.as_ref().is_some_and(|disabled| disabled.get())
+            tabindex=move || tab_index.as_ref().map(Signal::get)
             on:click=on_click
+            on:keydown=move |event| {
+                if let Some(on_keydown) = on_keydown {
+                    on_keydown.run(event);
+                }
+            }
         >
             {children()}
         </button>

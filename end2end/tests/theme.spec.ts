@@ -93,16 +93,15 @@ test("key surfaces and the original gold rosary remain visible in both themes", 
 
   for (const theme of ["dark", "light"] as const) {
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
-    for (const selector of [
-      ".site-header",
-      ".prayers-col",
-      ".guide-box",
-      ".rosary",
-      ".mystery-card",
-      ".footer",
-    ]) {
+    for (const selector of [".site-header", ".guide-box", ".rosary", ".footer"]) {
       await expect(page.locator(selector).first()).toBeVisible();
     }
+
+    await page.getByRole("tab", { name: "Preghiere" }).click();
+    await expect(page.locator(".prayers-section")).toBeVisible();
+    await page.getByRole("tab", { name: "Misteri" }).click();
+    await expect(page.locator(".mystery-card").first()).toBeVisible();
+    await page.getByRole("tab", { name: "Guida" }).click();
 
     await expect(page.locator(".chain").first()).toHaveCSS("stroke", rosaryGold[theme].chain);
     await expect(page.locator("#bead stop").first()).toHaveCSS(

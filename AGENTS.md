@@ -100,8 +100,12 @@ This is a small bilingual Rosary guide built with Leptos and Rust. Start with
 the application composition and follow the data outward:
 
 - `app/src/lib.rs` is the application entry point. `App` owns the shared
-  language, theme, guided-session, and ordered-intention signals and derives
-  the `Memo<Translation>` passed to page components.
+  language, theme, guided-session, ordered-intention, and active-section
+  signals, derives the `Memo<Translation>` passed to page components, and
+  mounts only the active Guide, Mysteries, or Prayers workspace view.
+- `app/src/navigation.rs` owns the pure `AppSection` model, stable tab/panel/
+  heading IDs, and wrapping section order. Keep it browser-independent and do
+  not mix workspace navigation state into `rosary_session.rs`.
 - `app/src/i18n.rs` contains `Language`, `Translation`, prayer text, mystery
   data, typed mystery-set identifiers, labels, and the Italian/English
   content. Add user-visible bilingual copy here rather than hard-coding it in
@@ -128,10 +132,17 @@ the application composition and follow the data outward:
   layout, not a replacement visual treatment.
 - `app/src/components/guide_box.rs` provides the shared visual shell used by
   the guide's bordered panels while preserving semantic inner elements.
-- `app/src/components/prayer_sidebar.rs` renders the seven reusable prayers,
-  including the Apostles' Creed first and Eternal Rest last.
-- `app/src/components/rosary_guide.rs` composes the intention editor, guided
-  prayer, rosary diagram, step legend, ending text, and decade note.
+- `app/src/components/section_nav.rs` renders the translated manual-activation
+  tab list below the header. Arrow keys and Home/End move roving focus;
+  Enter/Space or pointer activation selects one root-owned `AppSection`.
+- `app/src/components/prayers_section.rs` renders the standalone Prayers view
+  and its seven reusable prayers, including the Apostles' Creed first and
+  Eternal Rest last.
+- `app/src/components/rosary_guide.rs` switches the entire Guide panel between
+  the overview card and the guided-session panel. An active session replaces
+  the overview heading and outer card together with the intention editor,
+  Rosary diagram, recommendation, step legend, ending text, and decade note,
+  while retaining the guided session's read-only intention summary.
 - `app/src/components/prayer_intention/mod.rs` owns the intention editor
   signals, focus effects, and top-level composition. Its sibling modules
   separate metadata and feedback (`meta.rs`), tag/draft/add rendering
@@ -139,6 +150,9 @@ the application composition and follow the data outward:
   (`state.rs`). The `+` control stays last in the tag row and creates a focused
   inline draft; Enter or blur confirms non-empty text, while an empty draft
   disappears. Persist only confirmed add, delete, and reorder changes.
+  The title row owns the progressive intention pill (`n/50`), the inline draft
+  owns its character counter (`n/50`), and only validation or storage failures
+  render feedback; do not restore empty-state or routine success messages.
 - `app/src/components/guided_prayer.rs` renders the active `RosarySession`,
   shows the shared ordered intentions at the start and completion states, and
   presents the optional post-Rosary prayers after completion. It also owns
@@ -149,7 +163,9 @@ the application composition and follow the data outward:
   localized mystery-set label, then renders the recommendation box. Keep
   calendar rules in `calendar.rs` rather than adding them here.
 - `app/src/components/mysteries_section.rs` and
-  `app/src/components/mystery_card.rs` render the mystery groups and cards.
+  `app/src/components/mystery_card.rs` render the standalone Mysteries view.
+  Card actions delegate to `App`'s `open_guided` callback so session creation
+  and selection of the Guide view remain one root-owned operation.
 - `app/src/components/footer.rs` renders the footer; `mod.rs` exposes the
   component module surface.
 - `style/main.scss` is the shared responsive visual system. Component class
@@ -169,9 +185,10 @@ the application composition and follow the data outward:
 - `.github/workflows/pages.yml` builds the release site, generates its
   base-path-aware `index.html`, and deploys `target/site` through GitHub Pages.
 - `end2end` contains the Playwright browser checks for initial rendering,
-  language switching, theme resolution, guided prayer, private intention tag
-  editing and persistence, PWA installability and offline behavior,
-  accessibility, control alignment, and critical surfaces in both themes.
+  workspace tab semantics and responsive navigation, language switching,
+  theme resolution, guided prayer, private intention tag editing and
+  persistence, PWA installability and offline behavior, accessibility,
+  control alignment, and critical surfaces in both themes.
   Set `ROSARIO_APP_URL` when running `pwa.spec.ts` against a staged subpath.
 
 ## Fast start for a new feature

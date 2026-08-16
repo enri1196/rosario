@@ -19,6 +19,14 @@ impl IntentionFeedback {
     pub(super) const fn is_error(self) -> bool {
         matches!(self, Self::TooLong | Self::TooMany | Self::Duplicate)
     }
+
+    /// Returns whether feedback needs visible and live-region presentation.
+    pub(super) const fn should_show(self) -> bool {
+        matches!(
+            self,
+            Self::TooLong | Self::TooMany | Self::Duplicate | Self::StorageUnavailable
+        )
+    }
 }
 
 pub(super) fn confirm_draft(
@@ -179,9 +187,9 @@ pub(super) fn intention_feedback(
         Some(IntentionFeedback::TooLong) => copy.intention_too_long_error,
         Some(IntentionFeedback::TooMany) => copy.intention_too_many_error,
         Some(IntentionFeedback::Duplicate) => copy.intention_duplicate_error,
-        Some(IntentionFeedback::Added) => copy.intention_added_status,
-        Some(IntentionFeedback::Removed) => copy.intention_removed_status,
-        Some(IntentionFeedback::Reordered) => copy.intention_reordered_status,
+        Some(
+            IntentionFeedback::Added | IntentionFeedback::Removed | IntentionFeedback::Reordered,
+        ) => "",
         Some(IntentionFeedback::StorageUnavailable) => copy.intention_storage_error,
     }
 }

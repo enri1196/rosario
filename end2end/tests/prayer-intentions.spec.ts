@@ -33,10 +33,12 @@ test("adds, reloads, and shares an ordered private tag list with guided prayer",
   page.on("console", (message) => consoleMessages.push(message.text()));
 
   await expect(input).toHaveCount(0);
-  await expect(editor.locator(".intention-empty-state")).toHaveText(
-    "Nessuna intenzione aggiunta.",
+  await expect(editor.locator(".intention-empty-state")).toHaveCount(0);
+  await expect(editor.locator(".intention-total-count")).toHaveText("0/50");
+  await expect(editor.locator(".intention-total-count")).toHaveAttribute(
+    "aria-label",
+    "Intenzioni: 0/50",
   );
-  await expect(editor.locator(".intention-total-count")).toHaveText("Intenzioni: 0/50");
   await expect(editor.locator(".intention-tags > li").last().getByRole("button")).toHaveAttribute(
     "aria-label",
     "Aggiungi intenzione",
@@ -62,8 +64,8 @@ test("adds, reloads, and shares an ordered private tag list with guided prayer",
 
   await expect(input).toHaveCount(0);
   await expect(editor.locator(".intention-tag-text")).toHaveText(privateIntentions);
-  await expect(editor.locator(".intention-feedback")).toHaveText("Intenzione aggiunta.");
-  await expect(editor.locator(".intention-total-count")).toHaveText("Intenzioni: 2/50");
+  await expect(editor.locator(".intention-feedback")).toHaveCount(0);
+  await expect(editor.locator(".intention-total-count")).toHaveText("2/50");
   await expect
     .poll(() =>
       page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "[]"), INTENTIONS_STORAGE_KEY),
@@ -114,9 +116,13 @@ test("enforces 50 Unicode characters, unique tags, and a maximum of 50 intention
 
   await addButton.click();
   await input.fill(accepted);
-  await expect(editor.locator(".intention-count").first()).toHaveText("Caratteri: 50/50");
+  await expect(editor.locator(".intention-character-count")).toHaveText("50/50");
+  await expect(editor.locator(".intention-character-count")).toHaveAttribute(
+    "aria-label",
+    "Caratteri: 50/50",
+  );
   await input.press("Enter");
-  await expect(editor.locator(".intention-feedback")).toHaveText("Intenzione aggiunta.");
+  await expect(editor.locator(".intention-feedback")).toHaveCount(0);
 
   await addButton.click();
   await input.fill(accepted);
@@ -126,7 +132,11 @@ test("enforces 50 Unicode characters, unique tags, and a maximum of 50 intention
   );
 
   await input.fill(`${accepted}🙏`);
-  await expect(editor.locator(".intention-count").first()).toHaveText("Caratteri: 51/50");
+  await expect(editor.locator(".intention-character-count")).toHaveText("51/50");
+  await expect(editor.locator(".intention-character-count")).toHaveAttribute(
+    "aria-label",
+    "Caratteri: 51/50",
+  );
   await expect(input).toHaveAttribute("aria-invalid", "true");
   await input.press("Enter");
   await expect(editor.locator(".intention-feedback")).toHaveText(
@@ -138,7 +148,11 @@ test("enforces 50 Unicode characters, unique tags, and a maximum of 50 intention
     await addIntention(editor, `Intenzione ${index}`);
   }
   await expect(editor.locator(".intention-tag")).toHaveCount(50);
-  await expect(editor.locator(".intention-total-count")).toHaveText("Intenzioni: 50/50");
+  await expect(editor.locator(".intention-total-count")).toHaveText("50/50");
+  await expect(editor.locator(".intention-total-count")).toHaveAttribute(
+    "aria-label",
+    "Intenzioni: 50/50",
+  );
   await expect(addButton).toBeDisabled();
   await expect
     .poll(() =>
@@ -160,9 +174,7 @@ test("reorders tags with drag and keyboard, deletes with the right-side x, and p
   let tags = editor.locator(".intention-tag");
   await tags.nth(0).dragTo(tags.nth(2));
   await expect(editor.locator(".intention-tag-text")).toHaveText(["Seconda", "Terza", "Prima"]);
-  await expect(editor.locator(".intention-feedback")).toHaveText(
-    "Ordine delle intenzioni aggiornato.",
-  );
+  await expect(editor.locator(".intention-feedback")).toHaveCount(0);
 
   await tags.filter({ hasText: "Prima" }).focus();
   await page.keyboard.press("ArrowLeft");
@@ -177,7 +189,7 @@ test("reorders tags with drag and keyboard, deletes with the right-side x, and p
   expect(deleteBox!.x).toBeGreaterThan(firstTextBox!.x);
   await firstTag.getByRole("button", { name: "Elimina intenzione 1" }).click();
   await expect(editor.locator(".intention-tag-text")).toHaveText(["Prima", "Terza"]);
-  await expect(editor.locator(".intention-feedback")).toHaveText("Intenzione eliminata.");
+  await expect(editor.locator(".intention-feedback")).toHaveCount(0);
   await expect
     .poll(() =>
       page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? "[]"), INTENTIONS_STORAGE_KEY),
@@ -239,6 +251,8 @@ test("keeps tags usable in English, light theme, narrow screens, and disabled st
   await page.getByRole("button", { name: "Start guided Rosary" }).click();
   const guided = page.getByRole("region", { name: "Guided Rosary" });
   await expect(guided.locator(".guided-intention-tag")).toHaveText(["For peace"]);
+  await page.getByRole("button", { name: "Close guided Rosary" }).click();
+
   const tag = editor.locator(".intention-tag");
   const deleteButton = tag.getByRole("button", { name: "Delete intention 1" });
   const addBox = await editor.getByRole("button", { name: "Add intention" }).boundingBox();
