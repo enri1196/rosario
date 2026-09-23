@@ -1,6 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=DM+Sans:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap");
 
 :root {
+  // Fluid type scale: follows browser text-size preferences and grows gently
+  // on large displays without making ordinary desktop text disproportionately large.
+  --font-overline: clamp(.5625rem, .08vw + .53rem, .8125rem);
+  --font-small: clamp(.875rem, .12vw + .83rem, 1.125rem);
+  --font-reading: clamp(.9375rem, .17vw + .875rem, 1.25rem);
+  --font-body: clamp(1rem, .2vw + .9375rem, 1.375rem);
+  --font-heading: clamp(1.25rem, 1rem + .9vw, 2rem);
+  --font-display: clamp(1.75rem, 2rem + 1.1vw, 4rem);
+
   --color-page-background: #0a0d14;
   --color-secondary-background: #0d111a;
   --color-surface: #121722;
@@ -73,6 +82,9 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+html,
+body { touch-action: manipulation; }
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -82,7 +94,7 @@ body {
     var(--color-page-background);
   color: var(--color-text-primary);
   font-family: "EB Garamond", Georgia, serif;
-  font-size: 18px;
+  font-size: var(--font-body);
   line-height: 1.62;
   text-rendering: optimizeLegibility;
 }
@@ -129,7 +141,7 @@ button, input, select, textarea { font: inherit; }
 
 .ornament {
   color: var(--color-accent-dim);
-  font-size: 10px;
+  font-size: var(--font-overline);
   letter-spacing: 8px;
   opacity: .8;
 }
@@ -146,7 +158,7 @@ button, input, select, textarea { font: inherit; }
 .header-row h1 {
   margin: 0;
   color: var(--color-accent-bright);
-  font: 600 clamp(28px, 4vw, 48px)/1.15 "Cinzel", serif;
+  font: 600 var(--font-display)/1.15 "Cinzel", serif;
   letter-spacing: clamp(3px, .65vw, 8px);
   text-transform: uppercase;
   text-shadow: 0 0 30px var(--color-title-glow);
@@ -183,7 +195,7 @@ button, input, select, textarea { font: inherit; }
   align-items: center;
   gap: 8px;
   color: var(--color-text-dim);
-  font: 600 10px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
   letter-spacing: 1.2px;
   text-transform: uppercase;
 }
@@ -275,7 +287,7 @@ button, input, select, textarea { font: inherit; }
   padding-bottom: 7px;
   border-bottom: 0;
   color: var(--color-accent);
-  font: 600 11px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
   letter-spacing: 1.6px;
   text-transform: uppercase;
 }
@@ -283,7 +295,7 @@ button, input, select, textarea { font: inherit; }
 .prayer-block p {
   margin: 0;
   color: var(--color-text-dim);
-  font-size: 17px;
+  font-size: var(--font-reading);
   font-style: italic;
   line-height: 1.55;
   white-space: pre-line;
@@ -373,14 +385,14 @@ button, input, select, textarea { font: inherit; }
   text-transform: uppercase;
 }
 
-.section-kicker { margin: 0 0 20px; font-size: 12px; letter-spacing: 4px; }
+.section-kicker { margin: 0 0 20px; font-size: var(--font-overline); letter-spacing: 4px; }
 
 .app-button {
   min-height: 44px;
   border: 1px solid var(--color-surface-border);
   border-radius: var(--radius-small);
   cursor: pointer;
-  font: 600 13px "DM Sans", sans-serif;
+  font: 600 var(--font-small) "DM Sans", sans-serif;
 }
 
 .app-button--primary,
@@ -455,7 +467,7 @@ button, input, select, textarea { font: inherit; }
 .prayer-intention h3 {
   margin: 0 0 14px;
   color: var(--color-accent);
-  font: 600 11px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
   letter-spacing: 1.5px;
   text-transform: uppercase;
 }
@@ -473,7 +485,7 @@ button, input, select, textarea { font: inherit; }
 .intention-feedback {
   margin: 0;
   color: var(--color-text-dim);
-  font: 400 12px/1.45 "DM Sans", sans-serif;
+  font: 400 var(--font-small)/1.45 "DM Sans", sans-serif;
 }
 
 .intention-count {
@@ -508,7 +520,7 @@ button, input, select, textarea { font: inherit; }
   background: var(--color-control-background);
   color: var(--color-text-primary);
   cursor: grab;
-  font: 500 13px/1.35 "DM Sans", sans-serif;
+  font: 500 var(--font-small)/1.35 "DM Sans", sans-serif;
   touch-action: manipulation;
 }
 
@@ -545,7 +557,7 @@ button, input, select, textarea { font: inherit; }
 .intention-drag-handle {
   flex: 0 0 auto;
   color: var(--color-accent);
-  font-size: 16px;
+  font-size: var(--font-reading);
   line-height: 1;
 }
 
@@ -563,7 +575,7 @@ button, input, select, textarea { font: inherit; }
 .intention-empty-state {
   margin: 14px 0 0;
   color: var(--color-text-dim);
-  font-size: 14px;
+  font-size: var(--font-small);
   font-style: italic;
 }
 
@@ -603,7 +615,7 @@ button, input, select, textarea { font: inherit; }
 }
 
 .guided-prayer-header h3 {
-  font-size: 17px;
+  font-size: var(--font-reading);
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -627,7 +639,7 @@ button, input, select, textarea { font: inherit; }
 .guided-session-meta span,
 .guided-progress {
   color: var(--color-accent);
-  font: 600 10px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
   letter-spacing: .8px;
   text-transform: uppercase;
 }
@@ -651,7 +663,7 @@ button, input, select, textarea { font: inherit; }
 
 .guided-intention-label {
   color: var(--color-accent);
-  font: 600 10px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
   letter-spacing: .8px;
   text-transform: uppercase;
 }
@@ -671,15 +683,15 @@ button, input, select, textarea { font: inherit; }
   padding: 4px 9px;
   background: var(--color-surface-fill);
   color: var(--color-text-primary);
-  font: 500 12px/1.4 "DM Sans", sans-serif;
+  font: 500 var(--font-small)/1.4 "DM Sans", sans-serif;
   overflow-wrap: anywhere;
 }
 
 .guided-progress { margin-top: 18px; }
 
 .guided-prayer h4 {
-  margin-top: 10px;
-  font-size: clamp(20px, 4vw, 27px);
+  margin-top: 8px;
+  font-size: var(--font-heading);
   line-height: 1.25;
   scroll-margin-block: 2rem;
 }
@@ -787,7 +799,7 @@ button, input, select, textarea { font: inherit; }
 .guided-prayer-text {
   margin: 0;
   color: var(--color-text-dim);
-  font-size: 18px;
+  font-size: var(--font-body);
   line-height: 1.6;
   white-space: pre-line;
 }
@@ -816,7 +828,7 @@ button, input, select, textarea { font: inherit; }
 .post-rosary-prayer h6 {
   margin: 0;
   color: var(--color-accent);
-  font: 600 11px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
   letter-spacing: 1.2px;
   text-transform: uppercase;
 }
@@ -874,7 +886,7 @@ button, input, select, textarea { font: inherit; }
   padding: 18px 20px;
   list-style: none;
   color: var(--color-text-dim);
-  font: 500 13px/1.5 "DM Sans", sans-serif;
+  font: 500 var(--font-small)/1.5 "DM Sans", sans-serif;
 }
 
 .steps-legend li { display: flex; align-items: baseline; gap: 7px; }
@@ -887,7 +899,7 @@ button, input, select, textarea { font: inherit; }
   border: 1px solid var(--color-surface-border);
   border-radius: 50%;
   color: var(--color-accent);
-  font: 600 10px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
 }
 
 .mystery-recommendation {
@@ -908,7 +920,7 @@ button, input, select, textarea { font: inherit; }
 .mystery-recommendation h3 {
   margin: 0 0 8px;
   color: var(--color-accent);
-  font: 600 11px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
   letter-spacing: 1.5px;
   text-transform: uppercase;
 }
@@ -916,25 +928,25 @@ button, input, select, textarea { font: inherit; }
 .mystery-recommendation p {
   margin: 4px 0 0;
   color: var(--color-text-dim);
-  font-size: 15px;
+  font-size: var(--font-small);
 }
 
 .mystery-recommendation .recommendation-date {
   color: var(--color-text-primary);
-  font-size: 16px;
+  font-size: var(--font-reading);
 }
 
 .mystery-recommendation .recommendation-label {
   margin-right: 6px;
   color: var(--color-accent-bright);
-  font: 600 10px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
   letter-spacing: .6px;
   text-transform: uppercase;
 }
 
 .mystery-recommendation .recommendation-mystery {
   color: var(--color-text-primary);
-  font-size: 17px;
+  font-size: var(--font-reading);
 }
 
 .recommendation-picker {
@@ -947,7 +959,7 @@ button, input, select, textarea { font: inherit; }
   display: block;
   margin-bottom: 6px;
   color: var(--color-text-primary);
-  font: 600 13px "DM Sans", sans-serif;
+  font: 600 var(--font-small) "DM Sans", sans-serif;
 }
 
 .recommendation-controls {
@@ -978,7 +990,7 @@ button, input, select, textarea { font: inherit; }
 .mystery-recommendation .recommendation-help,
 .mystery-recommendation .recommendation-error {
   margin-top: 7px;
-  font: 400 12px/1.45 "DM Sans", sans-serif;
+  font: 400 var(--font-small)/1.45 "DM Sans", sans-serif;
 }
 
 .mystery-recommendation .recommendation-error {
@@ -992,7 +1004,7 @@ button, input, select, textarea { font: inherit; }
 .mystery-recommendation .recommendation-reason {
   max-width: 620px;
   margin: 10px auto 0;
-  font-size: 14px;
+  font-size: var(--font-small);
 }
 
 .end-box, .note-box {
@@ -1000,7 +1012,7 @@ button, input, select, textarea { font: inherit; }
 }
 .end-box { padding: 16px 20px; }
 .end-box h3 { border: 0; margin-bottom: 3px; }
-.end-box p, .note-box { color: var(--color-text-dim); font-size: 15px; }
+.end-box p, .note-box { color: var(--color-text-dim); font-size: var(--font-small); }
 .end-box p { margin: 0; }
 .note-box { padding: 13px 18px; font-style: italic; }
 
@@ -1008,7 +1020,7 @@ button, input, select, textarea { font: inherit; }
   width: 100%;
   padding: clamp(16px, 2vw, 28px) 0 clamp(32px, 5vw, 64px);
 }
-.section-title { margin: 0 0 38px; font-size: 18px; letter-spacing: 5px; }
+.section-title { margin: 0 0 38px; font-size: var(--font-body); letter-spacing: 5px; }
 
 .mysteries-grid {
   display: grid;
@@ -1026,7 +1038,7 @@ button, input, select, textarea { font: inherit; }
   padding: 0 5px 12px;
   border-bottom: 1px solid var(--color-card-divider);
   color: var(--color-accent-bright);
-  font: 600 12px "DM Sans", sans-serif;
+  font: 600 var(--font-small) "DM Sans", sans-serif;
   letter-spacing: 1.8px;
   text-align: center;
   text-transform: uppercase;
@@ -1061,14 +1073,14 @@ button, input, select, textarea { font: inherit; }
 .mystery-card h4 {
   margin: 13px 2px 7px;
   color: var(--color-accent);
-  font: 600 10px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
   letter-spacing: 1.1px;
   text-align: center;
   text-transform: uppercase;
 }
-.mystery-card > p { margin: 0 2px; color: var(--color-text-dim); font-size: 15px; font-style: italic; }
+.mystery-card > p { margin: 0 2px; color: var(--color-text-dim); font-size: var(--font-small); font-style: italic; }
 .mystery-card .mystery-fruit { margin-top: 8px; color: var(--color-text-primary); font-style: normal; }
-.mystery-fruit strong { display: block; color: var(--color-accent); font: 600 9px "DM Sans", sans-serif; letter-spacing: .8px; text-transform: uppercase; }
+.mystery-fruit strong { display: block; color: var(--color-accent); font: 600 var(--font-overline) "DM Sans", sans-serif; letter-spacing: .8px; text-transform: uppercase; }
 .mystery-pray-button { margin-top: 14px; }
 
 @supports (grid-template-rows: subgrid) {
@@ -1093,7 +1105,7 @@ button, input, select, textarea { font: inherit; }
   padding: 24px clamp(20px, 4vw, 64px);
   border-top: 1px solid var(--color-card-divider);
   color: var(--color-footer-text);
-  font: 600 10px "DM Sans", sans-serif;
+  font: 600 var(--font-overline) "DM Sans", sans-serif;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -1115,7 +1127,6 @@ button, input, select, textarea { font: inherit; }
 
 @media (max-width: 500px) {
   .site-header { padding-inline: 12px; }
-  .header-row h1 { font-size: 27px; }
   .ornament { letter-spacing: 3px; }
   .section-nav { padding: 8px; }
   .section-tablist { gap: 6px; }
